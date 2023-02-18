@@ -11,6 +11,7 @@ import requests
 
 CONVERT_TEI_TO_HTML = True  # do xslt conversion from TEI to HTML
 IMPORT_TO_SOLR = True
+IMPORT_TO_DJANGO = True
 SOLR_IMPORT_DIR = settings.SOLR_IMPORT_DIR
 SOLR_COLLECTION_NAME = settings.SOLR_COLLECTION_NAME
 SOLR_SERVER = settings.SOLR_SERVER
@@ -163,6 +164,10 @@ def process_lexica(lexica):
                     entry_root_for_xslt = ET.fromstring(entry_def)  # replace('\0', 'null').replace('\x00', '')
                     new_dom = transform(entry_root_for_xslt)
                     html_string = ET.tostring(new_dom, method="xml", encoding="UTF-8")
+
+                if IMPORT_TO_DJANGO:
+                    w = Word.objects.create(word_id=counter, lexicon=lex.file_prefix, word=lemma_text.strip(), definition=html_string.strip())
+                    w.save()
 
                 if IMPORT_TO_SOLR:
                     # strip xml tags
