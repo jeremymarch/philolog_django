@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="#stylesheet"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="html" encoding="UTF-8" omit-xml-declaration="yes" indent="no" media-type="text/html"/>
+<xsl:variable name="sense-1" select="//sense[position() = 1][1]"/>
+
+<xsl:template match="div1"><!--div1 for latin-->
+<div>
+	<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
+	<xsl:attribute name="class">body</xsl:attribute>
+	<xsl:apply-templates />
+</div>
+</xsl:template>
+<xsl:template match="div2"><!--div2 for greek-->
+<div>
+	<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
+	<xsl:attribute name="class">body</xsl:attribute>
+	<xsl:apply-templates />
+</div>
+</xsl:template>
+<xsl:template match="orth">
+<span class="orth">
+	<xsl:apply-templates />
+</span>
+</xsl:template>
+
+<xsl:template match="sense">
+<xsl:if test="generate-id(.) = generate-id($sense-1)"> <br/> </xsl:if>
+<br/>
+<div>
+	<xsl:attribute name="class">l<xsl:value-of select="@level"/></xsl:attribute>
+	<xsl:if test="@n !=''">
+<span class="label"><xsl:value-of select="@n"/>.</span>
+	</xsl:if>
+	<xsl:apply-templates />
+</div>
+</xsl:template>
+
+<xsl:template match="author"><span class="au"><xsl:apply-templates /></span></xsl:template>
+<xsl:template match="quote"><span class="qu"><xsl:apply-templates /></span></xsl:template>
+<xsl:template match="foreign"><span class="fo"><xsl:apply-templates /></span></xsl:template>
+<xsl:template match="i"><span class="tr"><xsl:apply-templates /></span></xsl:template>
+<xsl:template match="title"><span class="ti"><xsl:apply-templates /></span></xsl:template>
+<xsl:template match="bibl"><a class="bi"><xsl:attribute name="biblink"><xsl:value-of select="@n"/></xsl:attribute><xsl:apply-templates /></a></xsl:template>
+</xsl:stylesheet>
