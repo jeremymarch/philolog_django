@@ -1,5 +1,6 @@
 from django.core.management import BaseCommand
 from philolog.models import Word
+from django.conf import settings
 import os
 import git
 import lxml.etree as ET
@@ -8,10 +9,11 @@ import unicodedata
 import requests
 
 
-convert_tei_to_html = True  # do xslt conversion from TEI to HTML
-import_to_solr = True
-solr_dir = "import_data/solr_import_docs/"
-SOLR_COLLECTION = "localDocs2"
+CONVERT_TEI_TO_HTML = True  # do xslt conversion from TEI to HTML
+IMPORT_TO_SOLR = True
+SOLR_IMPORT_DIR = settings.SOLR_IMPORT_DIR
+SOLR_COLLECTION_NAME = settings.SOLR_COLLECTION_NAME
+SOLR_SERVER = settings.SOLR_SERVER
 
 
 def solr_create_xml_root():
@@ -37,7 +39,7 @@ def solr_append_word(root, word_id, name, lexicon, content):
 def solr_write_file(solr_xml_root, file_name):
     solr_xml_doc = ET.ElementTree(solr_xml_root)
     with open(file_name, 'wb') as f:
-        solr_xml_doc.write(f, encoding="utf-8", xml_declaration=True, pretty_print=True)
+        solr_xml_doc.write(f, encoding="UTF-8", xml_declaration=True, pretty_print=True)
 
 
 # https://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-in-a-python-unicode-string
@@ -85,8 +87,8 @@ def get_unique_suffix(word, word_dict):
 
 
 def process_lexica(lexica):
-    if os.path.isdir(solr_dir) is False:
-        os.mkdir(solr_dir)
+    if os.path.isdir(SOLR_IMPORT_DIR) is False:
+        os.mkdir(SOLR_IMPORT_DIR)
 
     for lex in lexica:
         lex_path_exists = os.path.isdir(lex.path)
@@ -101,7 +103,7 @@ def process_lexica(lexica):
             repo.pull("origin", lex.repo_branch)
             print("pull complete\n")
 
-        if convert_tei_to_html:
+        if CONVERT_TEI_TO_HTML:
             print("converting tei to html...")
             trans = ET.parse("import_data/logeionxslt.xml").getroot()
             transform = ET.XSLT(trans)
@@ -116,7 +118,7 @@ def process_lexica(lexica):
             if lex_file == "import_data/latinrepo/latindico10.xml":  # j is skipped
                 continue
 
-            if import_to_solr:
+            if IMPORT_TO_SOLR:
                 solr_xml_root = solr_create_xml_root()
 
             root = ET.parse(lex_file).getroot()
@@ -157,32 +159,32 @@ def process_lexica(lexica):
 
                 # print(entry_def)
 
-                if convert_tei_to_html:
+                if CONVERT_TEI_TO_HTML:
                     entry_root_for_xslt = ET.fromstring(entry_def)  # replace('\0', 'null').replace('\x00', '')
                     new_dom = transform(entry_root_for_xslt)
                     html_string = ET.tostring(new_dom, method="xml", encoding="UTF-8")
 
-                if import_to_solr:
+                if IMPORT_TO_SOLR:
                     # strip xml tags
-                    entry_def_notags = ET.tostring(lemma_div, method='text', encoding='UTF-8').decode('utf-8')
+                    entry_def_notags = ET.tostring(lemma_div, method='text', encoding='UTF-8').decode('UTF-8')
                     # print(entry_def_notags + "\n\n")
                     solr_append_word(solr_xml_root, lex_word_counter, lemma_text.strip(), lex.file_prefix, entry_def_notags.strip())
 
                 lex_word_counter = lex_word_counter + 1
 
-            # save xml file to solr_dir
-            solr_file = solr_dir + lex.file_prefix + str(x).zfill(2) + ".xml"
+            # save xml file to SOLR_IMPORT_DIR
+            solr_file = SOLR_IMPORT_DIR + lex.file_prefix + str(x).zfill(2) + ".xml"
             solr_write_file(solr_xml_root, solr_file)
 
             # upload to solr server
-            solr_update_url = "http://localhost:8983/solr/" + SOLR_COLLECTION + "/update?commit=true"
+            solr_update_url = SOLR_SERVER + "/solr/" + SOLR_COLLECTION_NAME + "/update?commit=true"
             solr_update_headers = {"Content-Type": "application/xml"}
             solr_update_payload = open(solr_file, 'rb').read()
             res = requests.post(solr_update_url, headers=solr_update_headers, data=solr_update_payload)
             # print("res: " + res.text)
 
             # or use the terminal command which is much faster:
-            # os.system("bin/post -c SOLR_COLLECTION ~/Documents/solr_import_docs")
+            # os.system("bin/post -c SOLR_COLLECTION_NAME ~/Documents/solr_import_docs")
 
 
 # https://stackoverflow.com/questions/49610125/whats-the-easiest-way-to-import-a-csv-file-into-a-django-model

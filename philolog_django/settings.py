@@ -33,6 +33,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SOLR_SERVER = "http://localhost:8983"
+SOLR_COLLECTION_NAME = "localDocs2"
+SOLR_IMPORT_DIR = "import_data/solr_import_docs/"
+
 
 # Application definition
 
