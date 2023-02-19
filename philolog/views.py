@@ -125,12 +125,20 @@ def ft(request):
 
     r = requests.get(solr_url)
     response = json.loads(r.text)
-    
+
+    res = []
+
     for document in response['response']['docs']:
         word_id = document['id'].split("_")[1]
         lex = document['cat'][0]
         word = Word.objects.filter(word_id=word_id, lexicon=lex).first()
-        print("  Name =", word.definition + "\n\n")
+        r = {}
+        r['id'] = word.word_id
+        r['lex'] = word.lexicon
+        r['lemma'] = word.word
+        r['def'] = word.definition
+        res.append(r)
+        # print("  Name =", word.definition + "\n\n")
 
     # word_id = request.GET['id']
     # word = Word.objects.filter(word_id=word_id,lexicon=lex).first()
