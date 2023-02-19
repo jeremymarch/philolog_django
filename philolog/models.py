@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Word(models.Model):
     word_id = models.IntegerField(db_index=True)
     # seq = models.BigIntegerField(db_index=True)

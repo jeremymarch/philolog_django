@@ -16,9 +16,9 @@ urlpatterns = [
     # re_path('lsj/.*', views.home, name="philolog-home"),
     # re_path('ls/.*', views.home, name="philolog-home"),
     # re_path('slater/.*', views.home, name="philolog-home"),
-    #re_path('^((?!query).)*$', views.home, name="philolog-home"),
-    #re_path('^((?!item).)*$', views.home, name="philolog-home"),
-    #re_path('lsj/', views.home, name="philolog-home"),
+    # re_path('^((?!query).)*$', views.home, name="philolog-home"),
+    # re_path('^((?!item).)*$', views.home, name="philolog-home"),
+    # re_path('lsj/', views.home, name="philolog-home"),
 ]
 
 handler404 = views.error404

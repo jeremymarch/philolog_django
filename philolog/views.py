@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from . models import Word
 import json
 import requests
@@ -19,7 +19,7 @@ def home(request):
 
 def query(request):
     query_data = json.loads(request.GET['query'])
-    
+
     page = int(request.GET['page'])
 
     if query_data['lexicon'] == "lsj":
@@ -35,9 +35,9 @@ def query(request):
     after_words = []
     page_size = 100
     if page <= 0:
-        before_words = Word.objects.filter(word__lt=query_data['w'],lexicon=lex).order_by('-word','word_id')[0:page_size]
+        before_words = Word.objects.filter(word__lt=query_data['w'], lexicon=lex).order_by('-word', 'word_id')[0:page_size]
     if page >= 0:
-        after_words = Word.objects.filter(word__gte=query_data['w'],lexicon=lex).order_by('word','word_id')[0:page_size]
+        after_words = Word.objects.filter(word__gte=query_data['w'], lexicon=lex).order_by('word', 'word_id')[0:page_size]
 
     words = []
     for w in before_words:
@@ -45,7 +45,7 @@ def query(request):
 
     words.reverse()  # before words are selected in reverse order
     selected_id = 0
-    scroll_position = 'top'
+    scroll_position = 'top'  # will either be 'top' or the word_id of the selected word
 
     for idx, w in enumerate(after_words):
         if idx == 0:
@@ -89,14 +89,14 @@ def get_def(request):
         return ""
 
     word_id = request.GET['id']
-    word = Word.objects.filter(word_id=word_id,lexicon=lex).first()
+    word = Word.objects.filter(word_id=word_id, lexicon=lex).first()
 
     response = {
         "principalParts": None,
         "def": word.definition,
         "defName": None,
         "word": word.word,
-        "unaccentedWord":"ω",
+        "unaccentedWord": "ω",
         "lemma": None,
         "requestTime": 0,
         "status": "0",
@@ -125,10 +125,11 @@ def ft(request):
 
     r = requests.get(solr_url)
     response = json.loads(r.text)
+    
     for document in response['response']['docs']:
         word_id = document['id'].split("_")[1]
         lex = document['cat'][0]
-        word = Word.objects.filter(word_id=word_id,lexicon=lex).first()
+        word = Word.objects.filter(word_id=word_id, lexicon=lex).first()
         print("  Name =", word.definition + "\n\n")
 
     # word_id = request.GET['id']
@@ -139,7 +140,7 @@ def ft(request):
         "def": r.text,
         "defName": None,
         "word": "",
-        "unaccentedWord":"ω",
+        "unaccentedWord": "ω",
         "lemma": None,
         "requestTime": 0,
         "status": "0",

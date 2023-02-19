@@ -11,6 +11,8 @@ import requests
 
 # https://stackoverflow.com/questions/3402520/is-there-a-way-to-force-lxml-to-parse-unicode-strings-that-specify-an-encoding-i
 utf8_parser = ET.XMLParser(encoding='utf-8')
+
+
 def parse_from_unicode(unicode_str):
     s = unicode_str.encode('utf-8')
     return ET.fromstring(s, parser=utf8_parser)
@@ -171,9 +173,9 @@ def process_lexica(lexica):
                 # print(entry_def)
 
                 if CONVERT_TEI_TO_HTML:
-                    # print(entry_def)                    
+                    # print(entry_def)
                     entry_root_for_xslt = parse_from_unicode(entry_def)
-                    
+
                     new_dom = transform(entry_root_for_xslt)
                     html_string = ET.tostring(new_dom, method="xml", encoding="utf-8").decode('UTF-8')
                     # print(html_string)
