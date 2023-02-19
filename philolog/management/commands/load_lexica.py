@@ -8,6 +8,8 @@ import sys
 import unicodedata
 import requests
 
+# ALTER TABLE philolog_word ALTER COLUMN word SET DATA TYPE character varying(255) COLLATE "el-x-icu";
+
 
 CONVERT_TEI_TO_HTML = True  # do xslt conversion from TEI to HTML
 IMPORT_TO_SOLR = True
@@ -166,7 +168,7 @@ def process_lexica(lexica):
                     html_string = ET.tostring(new_dom, method="xml", encoding="UTF-8")
 
                 if IMPORT_TO_DJANGO:
-                    w = Word.objects.create(word_id=counter, lexicon=lex.file_prefix, word=lemma_text.strip(), definition=html_string.strip())
+                    w = Word.objects.create(word_id=lex_word_counter, lexicon=lex.file_prefix, word=lemma_text.strip(), definition=html_string.strip())
                     w.save()
 
                 if IMPORT_TO_SOLR:

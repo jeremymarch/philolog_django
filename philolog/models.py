@@ -9,4 +9,4 @@ class Word(models.Model):
     definition = models.TextField()
 
     def __str__(self):
-        return self.word + " (" + self.lexicon + self.word_id + ")"
+        return self.word + " (" + self.lexicon + "_" + str(self.word_id) + ")"
