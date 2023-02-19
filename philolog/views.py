@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from . models import Word
-import json 
+import json
+import requests
 # from .models import Post
 
 
@@ -101,6 +102,49 @@ def get_def(request):
         "status": "0",
         "lexicon": "lsj",
         "word_id": word.word_id,
+        "method": "setWord"
+    }
+
+    return JsonResponse(response)
+
+
+def ft(request):
+    context = {
+        # "posts": Post.objects.all()
+    }
+    # if request.GET['lexicon'] == "lsj":
+    #     lex = "greatscott"
+    # elif request.GET['lexicon'] == "ls":
+    #     lex = "latindico"
+    # elif request.GET['lexicon'] == "slater":
+    #     lex = "pindar_dico"
+    # else:
+    #     return ""
+
+    solr_url = "http://localhost:8983/solr/localDocs/select?indent=true&q.op=OR&q=features%3Aclothing&wt=json"
+
+    r = requests.get(solr_url)
+    response = json.loads(r.text)
+    for document in response['response']['docs']:
+        word_id = document['id'].split("_")[1]
+        lex = document['cat'][0]
+        word = Word.objects.filter(word_id=word_id,lexicon=lex).first()
+        print("  Name =", word.definition + "\n\n")
+
+    # word_id = request.GET['id']
+    # word = Word.objects.filter(word_id=word_id,lexicon=lex).first()
+
+    response = {
+        "principalParts": None,
+        "def": r.text,
+        "defName": None,
+        "word": "",
+        "unaccentedWord":"ω",
+        "lemma": None,
+        "requestTime": 0,
+        "status": "0",
+        "lexicon": "lsj",
+        "word_id": "",
         "method": "setWord"
     }
 
