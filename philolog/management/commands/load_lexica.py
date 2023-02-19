@@ -8,6 +8,14 @@ import sys
 import unicodedata
 import requests
 
+
+# https://stackoverflow.com/questions/3402520/is-there-a-way-to-force-lxml-to-parse-unicode-strings-that-specify-an-encoding-i
+utf8_parser = ET.XMLParser(encoding='utf-8')
+def parse_from_unicode(unicode_str):
+    s = unicode_str.encode('utf-8')
+    return ET.fromstring(s, parser=utf8_parser)
+
+
 # ALTER TABLE philolog_word ALTER COLUMN word SET DATA TYPE character varying(255) COLLATE "el-x-icu";
 
 
@@ -147,7 +155,7 @@ def process_lexica(lexica):
                 if logeion_id is None:
                     logeion_id = ""
 
-                entry_def = ET.tostring(lemma_div, method="xml", encoding="UTF-8")  # changing UTF-8 to unicode no longer escapes character (= good
+                entry_def = ET.tostring(lemma_div, method="xml", encoding="utf-8").decode('UTF-8')  # changing UTF-8 to unicode no longer escapes character (= good
                 # print("entry: " + str(len(entry_def)))
                 sort_key = lex.sort_key_func(lemma_text)
 
@@ -157,15 +165,18 @@ def process_lexica(lexica):
                     print("letter: " + lemma_text)
 
                 # web unique url headword
-                sort_suffix = get_unique_suffix(sort_key, url_lemma_dictionary)  # will change space to - later
-                display_suffix = get_unique_suffix(lemma_text, display_url_lemma_dictionary)
+                # sort_suffix = get_unique_suffix(sort_key, url_lemma_dictionary)  # will change space to - later
+                # display_suffix = get_unique_suffix(lemma_text, display_url_lemma_dictionary)
 
                 # print(entry_def)
 
                 if CONVERT_TEI_TO_HTML:
-                    entry_root_for_xslt = ET.fromstring(entry_def)  # replace('\0', 'null').replace('\x00', '')
+                    # print(entry_def)                    
+                    entry_root_for_xslt = parse_from_unicode(entry_def)
+                    
                     new_dom = transform(entry_root_for_xslt)
-                    html_string = ET.tostring(new_dom, method="xml", encoding="UTF-8")
+                    html_string = ET.tostring(new_dom, method="xml", encoding="utf-8").decode('UTF-8')
+                    # print(html_string)
 
                 if IMPORT_TO_DJANGO:
                     w = Word.objects.create(word_id=lex_word_counter, lexicon=lex.file_prefix, word=lemma_text.strip(), definition=html_string.strip())
