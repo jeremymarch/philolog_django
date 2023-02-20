@@ -180,7 +180,7 @@ def process_lexica(lexica):
                     w.save()
 
                 if IMPORT_TO_SOLR:
-                    #strip xml tags
+                    # strip xml tags
                     entry_def_notags = ET.tostring(lemma_div, method='text', encoding='UTF-8').decode('UTF-8')
                     # print(entry_def_notags + "\n\n")
                     solr_append_word(solr_xml_root, lex_word_counter, lemma_text.strip(), lex.file_prefix, entry_def_notags.strip())
