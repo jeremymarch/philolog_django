@@ -1,4 +1,4 @@
-### Philolog.us for Django
+## philolog.us for django
 
 To install:  
 
