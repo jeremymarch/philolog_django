@@ -1,5 +1,4 @@
-from django.conf.urls import handler404
-from django.urls import path, re_path
+from django.urls import path
 from . import views
 
 urlpatterns = [
@@ -13,12 +12,4 @@ urlpatterns = [
     path('ls/item/', views.get_def, name="philolog-definition3"),
     path('slater/item/', views.get_def, name="philolog-definition4"),
     path('', views.home, name="philolog-home"),
-    # re_path('lsj/.*', views.home, name="philolog-home"),
-    # re_path('ls/.*', views.home, name="philolog-home"),
-    # re_path('slater/.*', views.home, name="philolog-home"),
-    # re_path('^((?!query).)*$', views.home, name="philolog-home"),
-    # re_path('^((?!item).)*$', views.home, name="philolog-home"),
-    # re_path('lsj/', views.home, name="philolog-home"),
 ]
-
-handler404 = views.error404

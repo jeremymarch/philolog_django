@@ -4,21 +4,8 @@ from django.conf import settings
 import os
 import git
 import lxml.etree as ET
-import sys
 import unicodedata
 import requests
-
-
-# https://stackoverflow.com/questions/3402520/is-there-a-way-to-force-lxml-to-parse-unicode-strings-that-specify-an-encoding-i
-utf8_parser = ET.XMLParser(encoding='utf-8')
-
-
-def parse_from_unicode(unicode_str):
-    s = unicode_str.encode('utf-8')
-    return ET.fromstring(s, parser=utf8_parser)
-
-
-# ALTER TABLE philolog_word ALTER COLUMN word SET DATA TYPE character varying(255) COLLATE "el-x-icu";
 
 
 CONVERT_TEI_TO_HTML = True  # do xslt conversion from TEI to HTML
@@ -27,6 +14,14 @@ IMPORT_TO_DJANGO = True
 SOLR_IMPORT_DIR = settings.SOLR_IMPORT_DIR
 SOLR_COLLECTION_NAME = settings.SOLR_COLLECTION_NAME
 SOLR_SERVER = settings.SOLR_SERVER
+
+# https://stackoverflow.com/questions/3402520/is-there-a-way-to-force-lxml-to-parse-unicode-strings-that-specify-an-encoding-i
+utf8_parser = ET.XMLParser(encoding='utf-8')
+
+
+def parse_from_unicode(unicode_str):
+    s = unicode_str.encode('utf-8')
+    return ET.fromstring(s, parser=utf8_parser)
 
 
 def solr_create_xml_root():
@@ -122,8 +117,8 @@ def process_lexica(lexica):
             transform = ET.XSLT(trans)
 
         lex_word_counter = 1
-        url_lemma_dictionary = {}
-        display_url_lemma_dictionary = {}
+        # url_lemma_dictionary = {}
+        # display_url_lemma_dictionary = {}
 
         for x in range(lex.start_file_num, (lex.end_file_num + 1)):
             lex_file = lex.path + "/" + lex.file_prefix + str(x).zfill(2) + ".xml"  # path with leading zero
@@ -159,7 +154,7 @@ def process_lexica(lexica):
 
                 entry_def = ET.tostring(lemma_div, method="xml", encoding="utf-8").decode('UTF-8')  # changing UTF-8 to unicode no longer escapes character (= good
                 # print("entry: " + str(len(entry_def)))
-                sort_key = lex.sort_key_func(lemma_text)
+                # sort_key = lex.sort_key_func(lemma_text)
 
                 if logeion_id in lex.letter_ids:
                     idx = lex.letter_ids.index(logeion_id)
@@ -200,7 +195,7 @@ def process_lexica(lexica):
             solr_update_url = SOLR_SERVER + "/solr/" + SOLR_COLLECTION_NAME + "/update?commit=true"
             solr_update_headers = {"Content-Type": "application/xml"}
             solr_update_payload = open(solr_file, 'rb').read()
-            res = requests.post(solr_update_url, headers=solr_update_headers, data=solr_update_payload)
+            requests.post(solr_update_url, headers=solr_update_headers, data=solr_update_payload)
             # print("res: " + res.text)
 
             # or use the terminal command which is much faster:
@@ -209,12 +204,13 @@ def process_lexica(lexica):
 
 # https://stackoverflow.com/questions/49610125/whats-the-easiest-way-to-import-a-csv-file-into-a-django-model
 class Command(BaseCommand):
-    # help = 'Load a questions csv file into the database'
+    """Download lexica from git repos and import them into Solr and Django."""
 
     # def add_arguments(self, parser):
     #     parser.add_argument('--path', type=str)
 
     def handle(self, *args, **kwargs):
+        lexica = [lsjlex, lewisshortlex, pindarlex]
         process_lexica(lexica)
 
 
@@ -273,5 +269,3 @@ pindarlex.alphabetic_div_name = "div1"
 pindarlex.lemma_div = "div2"
 pindarlex.start_file_num = 1  # skip 1, it contains intro
 pindarlex.end_file_num = 24
-
-lexica = [lsjlex, lewisshortlex, pindarlex]
