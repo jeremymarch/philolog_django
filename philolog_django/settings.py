@@ -95,14 +95,24 @@ WSGI_APPLICATION = 'philolog_django.wsgi.application'
 # DATABASES = {
 #     'default': dj_database_url.config(default='postgresql://user:password@localhost:5432/dbname', conn_max_age=600)
 # }
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get("DJANGO_DB_NAME"),
-        'USER': os.environ.get("DJANGO_DB_USER"),
-        'PASSWORD': os.environ.get("DJANGO_DB_PWD")
+if os.environ.get("DJANGO_DB_NAME") is None:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': "TEST_DB",
+            'USER': "TEST_DB",
+            'PASSWORD': "TEST_DB"
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get("DJANGO_DB_NAME"),
+            'USER': os.environ.get("DJANGO_DB_USER"),
+            'PASSWORD': os.environ.get("DJANGO_DB_PWD")
+        }
+    }
 
 
 # Password validation
