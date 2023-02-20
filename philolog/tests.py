@@ -1,6 +1,7 @@
 from django.test import TestCase
-from .views import query_words
+
 from .models import Word
+from .views import query_words
 
 # to run tests: python manage.py test
 

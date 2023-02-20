@@ -1,9 +1,10 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from . models import Word
 import json
-import requests
 
+import requests
+from django.http import JsonResponse
+from django.shortcuts import render
+
+from .models import Word
 
 # def error404(request, exception):
 #     return HttpResponseRedirect("/")

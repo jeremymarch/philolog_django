@@ -1,12 +1,13 @@
-from django.core.management import BaseCommand
-from philolog.models import Word
-from django.conf import settings
 import os
+import unicodedata
+
 import git
 import lxml.etree as ET
-import unicodedata
 import requests
+from django.conf import settings
+from django.core.management import BaseCommand
 
+from philolog.models import Word
 
 CONVERT_TEI_TO_HTML = True  # do xslt conversion from TEI to HTML
 IMPORT_TO_SOLR = True
