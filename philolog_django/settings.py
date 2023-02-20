@@ -96,6 +96,8 @@ WSGI_APPLICATION = 'philolog_django.wsgi.application'
 # DATABASES = {
 #     'default': dj_database_url.config(default='postgresql://user:password@localhost:5432/dbname', conn_max_age=600)
 # }
+
+# use sqlite for unit tests
 if 'test' in sys.argv:
     DATABASES = {
         'default': {
