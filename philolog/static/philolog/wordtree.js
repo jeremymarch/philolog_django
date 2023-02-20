@@ -190,7 +190,7 @@ function wordtree (idPrefix, width, height)
     var ftlabel = document.createElement("label");
     ftlabel.setAttribute("for", idPrefix + "FTCheck");
     ftlabel.style.position = "absolute";
-    ftlabel.style.top = "49px";
+    ftlabel.style.top = "46px";
     ftlabel.style.left = "213px";
     ftlabel.innerHTML = "FT";
     ftlabel.style.fontFamily = "helvetica, arial, sans-serif";
