@@ -176,13 +176,24 @@ function wordtree (idPrefix, width, height)
     //input.setAttribute("lang", "gr");
     input.id = idPrefix + "Entry";
     this.entry = input;
+
+
+    var ftcheck = document.createElement("input");
+    ftcheck.type = "checkbox";
+    ftcheck.ariaLabel = "full-text toggle";
+    ftcheck.style.position = "absolute";
+    ftcheck.style.top = "42px";
+    ftcheck.style.left = "209px";
+    ftcheck.id = idPrefix + "FTCheck";
+    ftcheck.onclick = ftclicked;
+    this.ft = ftcheck;
     
     var loading = document.createElement("div");
     loading.id = this.idPrefix + "Loading";
     //loading.src = "images/loading2.gif";
     loading.style.position = "absolute";
     loading.style.top = "15px";
-    loading.style.right = "44px";
+    loading.style.right = "35px";
     loading.style.display = "none";
     loading.style.height = "20px";
     loading.style.width = "20px";
@@ -227,6 +238,7 @@ function wordtree (idPrefix, width, height)
 	{
 		this.div.appendChild(morph);
 	}
+    this.div.appendChild(ftcheck);
 	this.div.appendChild(input);
     this.div.appendChild(loading);
 

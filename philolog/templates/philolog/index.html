@@ -36,6 +36,10 @@
       src: url('{% static 'philolog/newathu5_8.woff' %}') format('woff'),
       url('{% static 'philolog/newathu5_8.ttf' %}') format('ttf');
     }
+
+    #test1Entry { z-index:999; }
+    #hamburger { z-index:999; position:relative; }
+
   .ftrow {
     border: 1px solid black;
     margin-bottom: 10px;
@@ -276,6 +280,7 @@
 
     #logo {
       color: black;
+      z-index:999;
     }
 
     .nodestyle {
@@ -549,6 +554,16 @@ height: 22px;
 .dark #leftlist {
   background-color: #202124;
 }
+#defbody { transition: .75s; border-radius:14px;position:relative;z-index:1;top:50px;margin-left:280px;margin-right:10px;overflow:hidden;height:calc(100% - 80px);text-align:left; }
+#lsjdef { transition: .75s; position:relative;z-index:2;margin:0px;padding:10px;overflow:auto;height: calc(100% - 20px); }
+.fulltext #defbody { transition: .75s; margin-left: 10px; top:-10px;height: calc(100% - 18px); }
+.fulltext #lsjdef { transition: .75s; top: 62px;height: calc(100% - 100px); }
+#test1Entry {transition: .75s; width:184px;}  
+#test1Loading { transition: .75s;right:35px; }
+.fulltext #test1Loading { transition: .75s;right:-51px; }
+.fulltext #test1Entry {transition: .75s; width:256px;}  
+#test1FTCheck {z-index:999;}
+
   </style>
 </head>
 <body onload="start();" class="philbody">
@@ -576,8 +591,8 @@ height: 22px;
     </div>
   </div>
 
-  <div id="defbody" class="defbody" style="border-radius:14px;position:relative;z-index:1;top:50px;margin-left:280px;margin-right:10px;overflow:hidden;height:calc(100% - 80px);text-align:left;">
-    <div id="lsjdef" ontouchstart="onTouch(event)" style="position:relative;z-index:2;margin:0px;padding:10px;overflow:auto;height:0px;"></div>
+  <div id="defbody" class="defbody">
+    <div id="lsjdef" ontouchstart="onTouch(event)"></div>
   </div>
 
   <div style="position:absolute;top:0px;right:0px;height:48px;border:0px solid green;text-align:center;letter-spacing:normal;display:flex;">
@@ -611,7 +626,18 @@ height: 22px;
     <script type="text/javascript" src="{% static 'philolog/wordtree.js' %}"></script>
     <script type="text/javascript" src="{% static 'philolog/defjson.js' %}"></script>
     <script type="text/javascript">
-      var full_text = true;
+      var full_text = false;
+
+      function ftclicked() {
+        if (document.querySelector("#test1FTCheck").checked ) {
+          document.querySelector("HTML").classList.add("fulltext");
+          full_text = true;
+        }
+        else {
+          document.querySelector("HTML").classList.remove("fulltext");
+          full_text = false;
+        }
+      }
 
        //https://github.com/le717/microajax
        function microAjax(options) {
@@ -713,6 +739,8 @@ height: 22px;
       }
 
       function procFTResponse(str, status) {
+        var wt = lookupWT("test1");
+        wt.loading.style.display = "none";
         try
         {
             if (typeof JSON != "undefined")
@@ -754,19 +782,21 @@ height: 22px;
         //   con.innerHTML = "<div id='lsj222' style='padding:40px 18px;text-align:center;'>" + data.errorMesg + "</div>";
         //   return;
         // }
-        con.innerHTML = "<div id='lsj222' style='padding:10px 18px;'><div style='font-size:14pt;margin-bottom:4px;'>Full-text search results: </div><div style='margin-bottom:24px;'></div>" + rows + "</div>"; //the firstChild is the CDATA node
+        con.innerHTML = "<div id='lsj222' style='padding:10px 18px;'><div style='font-size:14pt;margin-top:6px;margin-bottom:4px;'>Full-text search results: </div><div style='margin-bottom:24px;'></div>" + rows + "</div>"; //the firstChild is the CDATA node
         con.scrollTo(0,0);
       }
-
+      
       function procFTResponseError(str) {
-        if (typeof JSON != "undefined")
-        {
-            var returnObj = JSON.parse(str);
-            if (typeof(returnObj.error) != "undefined") {
-                console.log("response error: " + returnObj.error);
-                //wt.loading.style.display = "none";
-            }
-        }
+        var wt = lookupWT("test1");
+        wt.loading.style.display = "none";
+        // if (typeof JSON != "undefined")
+        // {
+        //     var returnObj = JSON.parse(str);
+        //     if (typeof(returnObj.error) != "undefined") {
+        //         console.log("response error: " + returnObj.error);
+                
+        //     }
+        // }
       }
   
       function toggleHistoryChooser() {
@@ -1048,6 +1078,7 @@ height: 22px;
       }
   
       function onResize() {
+        return;
         var h = getViewportHeight(window);
         var width = getViewportWidth(window);
   
