@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import sys
 
 load_dotenv()
 
@@ -95,13 +96,11 @@ WSGI_APPLICATION = 'philolog_django.wsgi.application'
 # DATABASES = {
 #     'default': dj_database_url.config(default='postgresql://user:password@localhost:5432/dbname', conn_max_age=600)
 # }
-if os.environ.get("DJANGO_DB_NAME") is None:
+if 'test' in sys.argv:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': "TEST_DB",
-            'USER': "TEST_DB",
-            'PASSWORD': "TEST_DB"
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 else:
