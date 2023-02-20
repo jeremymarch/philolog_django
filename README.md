@@ -30,9 +30,3 @@ Import data from respective git repos into Solr and Django:
 python manage.py load_lexica
 
 python manage.py runserver
-
-
-
-
-      on ft
-      #defbody { margin-left: 10px; top:0px; }

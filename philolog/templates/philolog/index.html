@@ -629,6 +629,10 @@ height: 22px;
       var full_text = false;
 
       function ftclicked() {
+        document.getElementById("lsjdef").innerHTML = "";
+        var wt = lookupWT("test1");
+        wt.entry.value = "";
+
         if (document.querySelector("#test1FTCheck").checked ) {
           document.querySelector("HTML").classList.add("fulltext");
           full_text = true;
@@ -636,6 +640,7 @@ height: 22px;
         else {
           document.querySelector("HTML").classList.remove("fulltext");
           full_text = false;
+          wt.refresh();
         }
       }
 

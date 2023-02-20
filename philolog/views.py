@@ -121,8 +121,15 @@ def ft(request):
     # else:
     #     return ""
 
-    solr_query = request.GET.get("q", "")  # "features:money"
-    solr_url = "http://localhost:8983/solr/localDocs/select?indent=true&wt=json&q.op=AND&q=" + solr_query
+    solr_query = request.GET.get("q", "")  # "features: food"
+
+    # add field name to each query term
+    solr_query_list = solr_query.split(" ")
+    real_query = ""
+    for i in solr_query_list:
+        real_query += "features:" + i + " "
+
+    solr_url = "http://localhost:8983/solr/localDocs/select?indent=true&wt=json&q.op=AND&q=" + real_query
 
     r = requests.get(solr_url)
     response = json.loads(r.text)
