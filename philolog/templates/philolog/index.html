@@ -70,6 +70,13 @@
       --foreign-weight: normal;
       --quote-weight: normal;
   }
+
+  .ftrowheaderlink {color:blue;}
+  .dark .ftrowheaderlink {color:#03a5fc;}
+  .ftrowhead {
+  padding: 0px;
+  margin: 5px 0px;
+}
 /* document.documentElement.style.setProperty("--author-color", "green"); */
 
 .dark .fo {color:blue; color: var(--foreign-color-dark,blue);}
@@ -728,7 +735,18 @@ height: 22px;
 
         var rows = "";
         for (var i = 0; i < returnObj.ftresults.length; i++) {
-          rows += "<div class='ftrow'><p class='ftrowhead'></p>" + returnObj.ftresults[i].def + "</div>";
+          var lex = "";
+          if (returnObj.ftresults[i].lex == "greatscott") {
+            lex = "LSJ";
+          }
+          else if (returnObj.ftresults[i].lex == "latindico") {
+            lex = "LS";
+          }
+          else if (returnObj.ftresults[i].lex == "pindar_dico") {
+            lex = "Slater";
+          }
+          //getDef(cols[1], lexicon, "", false, true);
+          rows += "<div class='ftrow'><p class='ftrowhead'><a class='ftrowheaderlink' href='javascript:getDef(" + returnObj.ftresults[i].id + ", \"" + lex.toLowerCase() + "\", false, true)'>" + lex + ": " + returnObj.ftresults[i].lemma + "</a></p>" + returnObj.ftresults[i].def + "</div>";
         }
 
         var con = document.getElementById("lsjdef");
@@ -736,7 +754,7 @@ height: 22px;
         //   con.innerHTML = "<div id='lsj222' style='padding:40px 18px;text-align:center;'>" + data.errorMesg + "</div>";
         //   return;
         // }
-        con.innerHTML = "<div id='lsj222' style='padding:10px 18px;'><div style='font-size:20pt;margin-bottom:16px;'></div><div style='margin-bottom:24px;'></div>" + rows + "</div>"; //the firstChild is the CDATA node
+        con.innerHTML = "<div id='lsj222' style='padding:10px 18px;'><div style='font-size:14pt;margin-bottom:4px;'>Full-text search results: </div><div style='margin-bottom:24px;'></div>" + rows + "</div>"; //the firstChild is the CDATA node
         con.scrollTo(0,0);
       }
 
