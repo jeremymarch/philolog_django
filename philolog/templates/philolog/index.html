@@ -379,8 +379,8 @@ height: 22px;
   color: official;
   display: inline-block;
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 .lds-spinner div {
   transform-origin: 40px 40px;
@@ -563,6 +563,9 @@ height: 22px;
 .fulltext #test1Loading { transition: .75s;right:-51px; }
 .fulltext #test1Entry {transition: .75s; width:256px;}  
 #test1FTCheck {z-index:999;}
+
+LABEL {color:black;}
+.dark LABEL {color:white;}
 
   </style>
 </head>
@@ -1083,7 +1086,6 @@ height: 22px;
       }
   
       function onResize() {
-        return;
         var h = getViewportHeight(window);
         var width = getViewportWidth(window);
   
@@ -1095,11 +1097,11 @@ height: 22px;
         if (typeof w2 != "undefined" && w2)
           w2.setHeight(h - 70);
   
-        var defbody = document.getElementById("defbody");
-        defbody.style.height = h - 80 + "px";
+        // var defbody = document.getElementById("defbody");
+        // defbody.style.height = h - 80 + "px";
   
-        var lsjdef = document.getElementById("lsjdef");
-        lsjdef.style.height = (h - 110) + "px";
+        // var lsjdef = document.getElementById("lsjdef");
+        // lsjdef.style.height = (h - 110) + "px";
   
         var rl = document.getElementById("rightlist");
         if (rl) {

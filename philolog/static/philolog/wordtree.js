@@ -177,27 +177,35 @@ function wordtree (idPrefix, width, height)
     input.id = idPrefix + "Entry";
     this.entry = input;
 
-
     var ftcheck = document.createElement("input");
     ftcheck.type = "checkbox";
     ftcheck.ariaLabel = "full-text toggle";
     ftcheck.style.position = "absolute";
     ftcheck.style.top = "42px";
-    ftcheck.style.left = "209px";
+    ftcheck.style.left = "231px";
     ftcheck.id = idPrefix + "FTCheck";
     ftcheck.onclick = ftclicked;
     this.ft = ftcheck;
-    
+
+    var ftlabel = document.createElement("label");
+    ftlabel.setAttribute("for", idPrefix + "FTCheck");
+    ftlabel.style.position = "absolute";
+    ftlabel.style.top = "49px";
+    ftlabel.style.left = "213px";
+    ftlabel.innerHTML = "FT";
+    ftlabel.style.fontFamily = "helvetica, arial, sans-serif";
+    ftlabel.style.zIndex = 999;
+
     var loading = document.createElement("div");
     loading.id = this.idPrefix + "Loading";
     //loading.src = "images/loading2.gif";
     loading.style.position = "absolute";
     loading.style.top = "15px";
-    loading.style.right = "35px";
+    loading.style.right = "90px";
     loading.style.display = "none";
-    loading.style.height = "20px";
-    loading.style.width = "20px";
-    loading.style.zIndex = 10;
+    loading.style.height = "18px";
+    loading.style.width = "18px";
+    loading.style.zIndex = 999;
     //var loading = document.createElement("div");
     //loading.innerHTML = '<svg class="spinner" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="10"></circle></svg>';
     loading.innerHTML = '<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
@@ -238,7 +246,9 @@ function wordtree (idPrefix, width, height)
 	{
 		this.div.appendChild(morph);
 	}
+    
     this.div.appendChild(ftcheck);
+    this.div.appendChild(ftlabel);
 	this.div.appendChild(input);
     this.div.appendChild(loading);
 
