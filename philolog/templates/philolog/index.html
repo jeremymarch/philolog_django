@@ -36,6 +36,16 @@
       src: url('{% static 'philolog/newathu5_8.woff' %}') format('woff'),
       url('{% static 'philolog/newathu5_8.ttf' %}') format('ttf');
     }
+  .ftrow {
+    border: 1px solid black;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  .dark .ftrow {
+    border: 1px solid white;
+  }
+
   .wordtree input {
     font-family:helvetica, arial;/*WebNewAthenaUnicode;*/
     font-size:11pt;
@@ -594,6 +604,7 @@ height: 22px;
     <script type="text/javascript" src="{% static 'philolog/wordtree.js' %}"></script>
     <script type="text/javascript" src="{% static 'philolog/defjson.js' %}"></script>
     <script type="text/javascript">
+      var full_text = true;
 
        //https://github.com/le717/microajax
        function microAjax(options) {
@@ -680,6 +691,64 @@ height: 22px;
   
         hist.close();
         document.getElementById("test1Entry").focus();
+      }
+
+      function full_text_request(query) {
+        console.log("full text request");
+        var ft_url = "ft/?q=" + query;
+        microAjax({
+          url: ft_url,
+          method: "GET",
+          success: procFTResponse,
+          warning: procFTResponseError,
+          error: null
+        });
+      }
+
+      function procFTResponse(str, status) {
+        try
+        {
+            if (typeof JSON != "undefined")
+            {
+                returnObj = JSON.parse(str);
+            }
+            else
+            {
+                //console.log("browser does not support json decode");
+                return;//returnObj = eval("(" + str + ")");
+            }
+        }
+        catch(e) { if (debug) console.log(e.message + "\n" + str); return; };
+        
+        if (!returnObj) {
+            return;
+        }
+
+        console.log("found " + returnObj.num + " items, returned " + returnObj.ftresults.length + " items");
+
+        var rows = "";
+        for (var i = 0; i < returnObj.ftresults.length; i++) {
+          rows += "<div class='ftrow'><p class='ftrowhead'></p>" + returnObj.ftresults[i].def + "</div>";
+        }
+
+        var con = document.getElementById("lsjdef");
+        // if (data.errorMesg) {
+        //   con.innerHTML = "<div id='lsj222' style='padding:40px 18px;text-align:center;'>" + data.errorMesg + "</div>";
+        //   return;
+        // }
+        con.innerHTML = "<div id='lsj222' style='padding:10px 18px;'><div style='font-size:20pt;margin-bottom:16px;'></div><div style='margin-bottom:24px;'></div>" + rows + "</div>"; //the firstChild is the CDATA node
+        con.scrollTo(0,0);
+      }
+
+      function procFTResponseError(str) {
+        if (typeof JSON != "undefined")
+        {
+            var returnObj = JSON.parse(str);
+            if (typeof(returnObj.error) != "undefined") {
+                console.log("response error: " + returnObj.error);
+                //wt.loading.style.display = "none";
+            }
+        }
       }
   
       function toggleHistoryChooser() {
@@ -853,7 +922,7 @@ height: 22px;
   
       function start() {
         var isTouchDevice = (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
-        console.log("is touch: " + isTouchDevice + ": " + navigator.maxTouchPoints + ", " + navigator.maxTouchPoints);
+        //console.log("is touch: " + isTouchDevice + ": " + navigator.maxTouchPoints + ", " + navigator.maxTouchPoints);
         var ee = window.location.pathname;
         var m = ee.match(/\/(lsj|ls|slater)\/?([^\/]*)\/?$/);
         var startLex = "lsj";
@@ -1070,7 +1139,7 @@ height: 22px;
       //console.log("val: " + val);
       var charCode = typeof(evt.which) == "number" ? evt.which : evt.keyCode;
   
-      if (charCode && charCode > 64 && charCode < 123) //letter
+      if (charCode && charCode > 64 && charCode < 123 && !full_text) //letter
       {
           var start = source.selectionStart;
           var end = source.selectionEnd;
@@ -1139,7 +1208,7 @@ height: 22px;
   {
     if (typeof(localStorage) != "undefined") {
       var value = localStorage.getItem(name);
-      console.log("localstorage: " + name + ": " + value);
+      //console.log("localstorage: " + name + ": " + value);
       return value;
     }
     /*

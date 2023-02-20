@@ -362,12 +362,16 @@ function wordtree (idPrefix, width, height)
         	this.params.w = this.entry.value;
         var query = makeQueryString(this.params);
         query = encodeURIComponent(query);
-        
-        // encodeURI... only required for IE--Mozilla did it automatically
-        var url = this.url + '?n=' + (this.maxWords + 1) + "&idprefix=" + this.idPrefix + '&x=' + Math.random() + '&requestTime=' + requestTime + '&page=' + 0 + '&mode=' + this.mode + "&query=" + query;
-		//alert(url);
 
-        requestRows(url);
+        if (full_text) {
+            full_text_request(this.entry.value);
+        }
+        else {       
+            // encodeURI... only required for IE--Mozilla did it automatically
+            var url = this.url + '?n=' + (this.maxWords + 1) + "&idprefix=" + this.idPrefix + '&x=' + Math.random() + '&requestTime=' + requestTime + '&page=' + 0 + '&mode=' + this.mode + "&query=" + query;
+            //console.log(url);
+            requestRows(url);
+        }
     }
     
     function requestNextPage()
@@ -965,7 +969,7 @@ eventually lexicon, query, and tag_id will be put into a single field for reques
             }
             else
             {
-                console.log("browser does not support json decode");
+                //console.log("browser does not support json decode");
                 return;//returnObj = eval("(" + str + ")");
             }
         }
@@ -1028,9 +1032,9 @@ eventually lexicon, query, and tag_id will be put into a single field for reques
         //block result sets which come out of sequence
         if (wt.lastRequestTime > parseInt(returnObj.requestTime))
         {
-            if (debug) {
-                console.log("out of seq!");
-            }
+            // if (debug) {
+            //     console.log("out of seq!");
+            // }
             wt.blockScroll = false;
             return;
         }
@@ -1045,18 +1049,18 @@ eventually lexicon, query, and tag_id will be put into a single field for reques
         //block pages which are repeats or out of order
         if (returnedPage < 0 && returnedPage >= wt.pageUp)
         {
-            if (debug) {
-                console.log("wt.pageUp: " + wt.pageUp + "; returnObj.page: " + returnObj.page);
-            }
+            // if (debug) {
+            //     console.log("wt.pageUp: " + wt.pageUp + "; returnObj.page: " + returnObj.page);
+            // }
                 
             wt.blockScroll = false;
             return;
         }
         else if (returnedPage > 0 && returnedPage <= wt.pageUp)
         {
-            if (debug) {
-                console.log("wt.pageDown: " + wt.page + "; returnObj.pageDown: " + returnObj.page);
-            }
+            // if (debug) {
+            //     console.log("wt.pageDown: " + wt.page + "; returnObj.pageDown: " + returnObj.page);
+            // }
                 
             wt.blockScroll = false;
             return;

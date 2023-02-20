@@ -82,7 +82,7 @@ function setWord(json, status) {
       return; //data = eval("(" + json + ")");
     }
   } catch (e) {
-    if (debug) console.log(e.message + "\n" + json);
+    //if (debug) console.log(e.message + "\n" + json);
     return;
   };
 
