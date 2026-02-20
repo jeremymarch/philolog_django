@@ -9,8 +9,9 @@ from django.core.management import BaseCommand
 
 from philolog.models import Word
 
+GIT_CLONE_PULL = False
 CONVERT_TEI_TO_HTML = True  # do xslt conversion from TEI to HTML
-IMPORT_TO_SOLR = True
+IMPORT_TO_SOLR = False
 IMPORT_TO_DJANGO = True
 SOLR_IMPORT_DIR = settings.SOLR_IMPORT_DIR
 SOLR_COLLECTION_NAME = settings.SOLR_COLLECTION_NAME
@@ -19,6 +20,15 @@ SOLR_SERVER = settings.SOLR_SERVER
 # https://stackoverflow.com/questions/3402520/is-there-a-way-to-force-lxml-to-parse-unicode-strings-that-specify-an-encoding-i
 utf8_parser = ET.XMLParser(encoding='utf-8')
 
+def strip_diacritics(input_str):
+    """
+    Strips accents/diacritics from a unicode string.
+    """
+    # Normalize to NFD (Canonical Decomposition) to separate base characters from diacritics
+    nfkd_form = unicodedata.normalize('NFD', input_str)
+    # Filter out all combining characters (which have category 'Mn': Mark, Nonspacing)
+    only_chars = "".join([c for c in nfkd_form if not unicodedata.combining(c)])
+    return only_chars
 
 def parse_from_unicode(unicode_str):
     s = unicode_str.encode('utf-8')
@@ -102,15 +112,16 @@ def process_lexica(lexica):
     for lex in lexica:
         lex_path_exists = os.path.isdir(lex.path)
 
-        if lex_path_exists is False:
-            print("cloning repository: " + lex.repo_url + "...\n")
-            repo = git.Repo.clone_from(lex.repo_url, lex.path, branch=lex.repo_branch)
-            print("clone complete\n")
-        else:
-            print("pulling updates from repository: " + lex.repo_url + "...\n")
-            repo = git.Git(lex.path)
-            repo.pull("origin", lex.repo_branch)
-            print("pull complete\n")
+        if GIT_CLONE_PULL:
+            if lex_path_exists is False:
+                print("cloning repository: " + lex.repo_url + "...\n")
+                repo = git.Repo.clone_from(lex.repo_url, lex.path, branch=lex.repo_branch)
+                print("clone complete\n")
+            else:
+                print("pulling updates from repository: " + lex.repo_url + "...\n")
+                repo = git.Git(lex.path)
+                repo.pull("origin", lex.repo_branch)
+                print("pull complete\n")
 
         if CONVERT_TEI_TO_HTML:
             print("converting tei to html...")
@@ -188,15 +199,16 @@ def process_lexica(lexica):
 
                 lex_word_counter = lex_word_counter + 1
 
-            # save xml file to SOLR_IMPORT_DIR
-            solr_file = SOLR_IMPORT_DIR + lex.file_prefix + str(x).zfill(2) + ".xml"
-            solr_write_file(solr_xml_root, solr_file)
+            if IMPORT_TO_SOLR:
+                # save xml file to SOLR_IMPORT_DIR
+                solr_file = SOLR_IMPORT_DIR + lex.file_prefix + str(x).zfill(2) + ".xml"
+                solr_write_file(solr_xml_root, solr_file)
 
-            # upload to solr server
-            solr_update_url = SOLR_SERVER + "/solr/" + SOLR_COLLECTION_NAME + "/update?commit=true"
-            solr_update_headers = {"Content-Type": "application/xml"}
-            solr_update_payload = open(solr_file, 'rb').read()
-            requests.post(solr_update_url, headers=solr_update_headers, data=solr_update_payload)
+                # upload to solr server
+                solr_update_url = SOLR_SERVER + "/solr/" + SOLR_COLLECTION_NAME + "/update?commit=true"
+                solr_update_headers = {"Content-Type": "application/xml"}
+                solr_update_payload = open(solr_file, 'rb').read()
+                requests.post(solr_update_url, headers=solr_update_headers, data=solr_update_payload)
             # print("res: " + res.text)
 
             # or use the terminal command which is much faster:

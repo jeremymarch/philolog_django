@@ -100,23 +100,28 @@ WSGI_APPLICATION = 'philolog_django.wsgi.application'
 # }
 
 # use sqlite for unit tests
-if 'test' in sys.argv:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+# if 'test' in sys.argv:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'NAME': os.environ.get("DJANGO_DB_NAME"),
+#             'USER': os.environ.get("DJANGO_DB_USER"),
+#             'PASSWORD': os.environ.get("DJANGO_DB_PWD")
+#         }
+#     }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ.get("DJANGO_DB_NAME"),
-            'USER': os.environ.get("DJANGO_DB_USER"),
-            'PASSWORD': os.environ.get("DJANGO_DB_PWD")
-        }
-    }
-
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
