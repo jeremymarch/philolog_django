@@ -36,9 +36,9 @@ def query_words(word_prefix, lex, page, page_size):
     after_words = []
 
     if page <= 0:
-        before_words = Word.objects.filter(word__lt=word_prefix, lexicon=lex).order_by("-word", "word_id")[0:page_size]
+        before_words = Word.objects.filter(sort_key__lt=word_prefix, lexicon=lex).order_by("-sort_key", "word_id")[0:page_size]
     if page >= 0:
-        after_words = Word.objects.filter(word__gte=word_prefix, lexicon=lex).order_by("word", "word_id")[0:page_size]
+        after_words = Word.objects.filter(sort_key__gte=word_prefix, lexicon=lex).order_by("sort_key", "word_id")[0:page_size]
 
     words = []
     for w in before_words:
@@ -55,7 +55,6 @@ def query_words(word_prefix, lex, page, page_size):
         words.append([w.word, w.word_id])
 
     return selected_id, words
-
 
 def get_words(request):
     """Returns page_size words above and below given string prefix."""

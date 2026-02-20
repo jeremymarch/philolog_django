@@ -166,7 +166,7 @@ def process_lexica(lexica):
 
                 entry_def = ET.tostring(lemma_div, method="xml", encoding="utf-8").decode('UTF-8')  # changing UTF-8 to unicode no longer escapes character (= good
                 # print("entry: " + str(len(entry_def)))
-                # sort_key = lex.sort_key_func(lemma_text)
+                sort_key = lex.sort_key_func(lemma_text)
 
                 if logeion_id in lex.letter_ids:
                     idx = lex.letter_ids.index(logeion_id)
@@ -188,7 +188,7 @@ def process_lexica(lexica):
                     # print(html_string)
 
                 if IMPORT_TO_DJANGO:
-                    w = Word.objects.create(word_id=lex_word_counter, lexicon=lex.file_prefix, word=lemma_text.strip(), definition=html_string.strip())
+                    w = Word.objects.create(word_id=lex_word_counter, lexicon=lex.file_prefix, word=lemma_text.strip(), sort_key=sort_key.strip(), definition=html_string.strip())
                     w.save()
 
                 if IMPORT_TO_SOLR:
