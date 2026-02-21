@@ -18,52 +18,56 @@ SOLR_COLLECTION_NAME = settings.SOLR_COLLECTION_NAME
 SOLR_SERVER = settings.SOLR_SERVER
 
 # https://stackoverflow.com/questions/3402520/is-there-a-way-to-force-lxml-to-parse-unicode-strings-that-specify-an-encoding-i
-utf8_parser = ET.XMLParser(encoding='utf-8')
+utf8_parser = ET.XMLParser(encoding="utf-8")
+
 
 def strip_diacritics(input_str):
     """
     Strips accents/diacritics from a unicode string.
     """
     # Normalize to NFD (Canonical Decomposition) to separate base characters from diacritics
-    nfkd_form = unicodedata.normalize('NFD', input_str)
+    nfkd_form = unicodedata.normalize("NFD", input_str)
     # Filter out all combining characters (which have category 'Mn': Mark, Nonspacing)
     only_chars = "".join([c for c in nfkd_form if not unicodedata.combining(c)])
     return only_chars
 
+
 def parse_from_unicode(unicode_str):
-    s = unicode_str.encode('utf-8')
+    s = unicode_str.encode("utf-8")
     return ET.fromstring(s, parser=utf8_parser)
 
 
 def solr_create_xml_root():
-    return ET.Element('add')
+    return ET.Element("add")
 
 
 def solr_append_word(root, word_id, name, lexicon, content):
-    doc_el = ET.SubElement(root, 'doc')
+    doc_el = ET.SubElement(root, "doc")
 
-    id_el = ET.SubElement(doc_el, 'field', name='id')
+    id_el = ET.SubElement(doc_el, "field", name="id")
     id_el.text = lexicon + "_" + str(word_id)
 
-    name_el = ET.SubElement(doc_el, 'field', name='name')
+    name_el = ET.SubElement(doc_el, "field", name="name")
     name_el.text = name
 
-    cat_el = ET.SubElement(doc_el, 'field', name='cat')
+    cat_el = ET.SubElement(doc_el, "field", name="cat")
     cat_el.text = lexicon
 
-    features_el = ET.SubElement(doc_el, 'field', name='features')
+    features_el = ET.SubElement(doc_el, "field", name="features")
     features_el.text = content
 
 
 def solr_write_file(solr_xml_root, file_name):
     solr_xml_doc = ET.ElementTree(solr_xml_root)
-    with open(file_name, 'wb') as f:
+    with open(file_name, "wb") as f:
         solr_xml_doc.write(f, encoding="UTF-8", xml_declaration=True, pretty_print=True)
 
 
 # https://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-in-a-python-unicode-string
 def decompose_and_strip_combining(s):
-    return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')  # Mn is the combining character class
+    return "".join(
+        c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn"
+    )  # Mn is the combining character class
 
 
 # need to handle digamma = ewww
@@ -76,12 +80,12 @@ def get_greek_sort_key(ustr):
     elif ustr == "Ϟ ϟ":
         return "πωωω"
     else:
-        ustr = ustr.replace(u"\u1fbd", u"")  # koronis, used for spacing smooth breathing
+        ustr = ustr.replace("\u1fbd", "")  # koronis, used for spacing smooth breathing
         s = decompose_and_strip_combining(ustr)
         s = s.lower()
-        s = s.replace(u"\u03c2", u"\u03c3")  # replace final sigma with sigma
-        s = s.replace(u"ʼ", u"")  # only in ʼκτώ
-        s = s.replace(u"ϝ", u"εωωω")
+        s = s.replace("\u03c2", "\u03c3")  # replace final sigma with sigma
+        s = s.replace("ʼ", "")  # only in ʼκτώ
+        s = s.replace("ϝ", "εωωω")
         return s
 
 
@@ -115,7 +119,9 @@ def process_lexica(lexica):
         if GIT_CLONE_PULL:
             if lex_path_exists is False:
                 print("cloning repository: " + lex.repo_url + "...\n")
-                repo = git.Repo.clone_from(lex.repo_url, lex.path, branch=lex.repo_branch)
+                repo = git.Repo.clone_from(
+                    lex.repo_url, lex.path, branch=lex.repo_branch
+                )
                 print("clone complete\n")
             else:
                 print("pulling updates from repository: " + lex.repo_url + "...\n")
@@ -133,11 +139,14 @@ def process_lexica(lexica):
         # display_url_lemma_dictionary = {}
 
         for x in range(lex.start_file_num, (lex.end_file_num + 1)):
-            lex_file = lex.path + "/" + lex.file_prefix + str(x).zfill(2) + ".xml"  # path with leading zero
+            lex_file = (
+                lex.path + "/" + lex.file_prefix + str(x).zfill(2) + ".xml"
+            )  # path with leading zero
 
             if lex_file == "import_data/latinrepo/latindico10.xml":  # j is skipped
                 continue
 
+            solr_xml_root = None
             if IMPORT_TO_SOLR:
                 solr_xml_root = solr_create_xml_root()
 
@@ -145,12 +154,16 @@ def process_lexica(lexica):
 
             print("file: " + lex_file)
 
-            top = root.find("text").find("body")  # Lewis and Short has a body tag, LSJ does not
+            top = root.find("text").find(
+                "body"
+            )  # Lewis and Short has a body tag, LSJ does not
             if top is None:
                 top = root.find("text")
 
             alpha_div = top.find(lex.alphabetic_div_name)
-            for lemma_div in alpha_div.findall(lex.lemma_div):  # in case there is more than one div0
+            for lemma_div in alpha_div.findall(
+                lex.lemma_div
+            ):  # in case there is more than one div0
                 lemma = lemma_div.find("head")
                 orth = lemma.find("orth")  # n1671a
                 if orth is not None:
@@ -164,7 +177,11 @@ def process_lexica(lexica):
                 if logeion_id is None:
                     logeion_id = ""
 
-                entry_def = ET.tostring(lemma_div, method="xml", encoding="utf-8").decode('UTF-8')  # changing UTF-8 to unicode no longer escapes character (= good
+                entry_def = ET.tostring(
+                    lemma_div, method="xml", encoding="utf-8"
+                ).decode(
+                    "UTF-8"
+                )  # changing UTF-8 to unicode no longer escapes character (= good
                 # print("entry: " + str(len(entry_def)))
                 sort_key = lex.sort_key_func(lemma_text)
 
@@ -178,24 +195,40 @@ def process_lexica(lexica):
                 # display_suffix = get_unique_suffix(lemma_text, display_url_lemma_dictionary)
 
                 # print(entry_def)
-
+                html_string = ""
                 if CONVERT_TEI_TO_HTML:
                     # print(entry_def)
                     entry_root_for_xslt = parse_from_unicode(entry_def)
 
-                    new_dom = transform(entry_root_for_xslt)
-                    html_string = ET.tostring(new_dom, method="xml", encoding="utf-8").decode('UTF-8')
+                    new_dom = ET.transform(entry_root_for_xslt)
+                    html_string = ET.tostring(
+                        new_dom, method="xml", encoding="utf-8"
+                    ).decode("UTF-8")
                     # print(html_string)
 
                 if IMPORT_TO_DJANGO:
-                    w = Word.objects.create(word_id=lex_word_counter, lexicon=lex.file_prefix, word=lemma_text.strip(), sort_key=sort_key.strip(), definition=html_string.strip())
+                    w = Word.objects.create(
+                        word_id=lex_word_counter,
+                        lexicon=lex.file_prefix,
+                        word=lemma_text.strip(),
+                        sort_key=sort_key.strip(),
+                        definition=html_string.strip(),
+                    )
                     w.save()
 
                 if IMPORT_TO_SOLR:
                     # strip xml tags
-                    entry_def_notags = ET.tostring(lemma_div, method='text', encoding='UTF-8').decode('UTF-8')
+                    entry_def_notags = ET.tostring(
+                        lemma_div, method="text", encoding="UTF-8"
+                    ).decode("UTF-8")
                     # print(entry_def_notags + "\n\n")
-                    solr_append_word(solr_xml_root, lex_word_counter, lemma_text.strip(), lex.file_prefix, entry_def_notags.strip())
+                    solr_append_word(
+                        solr_xml_root,
+                        lex_word_counter,
+                        lemma_text.strip(),
+                        lex.file_prefix,
+                        entry_def_notags.strip(),
+                    )
 
                 lex_word_counter = lex_word_counter + 1
 
@@ -205,10 +238,19 @@ def process_lexica(lexica):
                 solr_write_file(solr_xml_root, solr_file)
 
                 # upload to solr server
-                solr_update_url = SOLR_SERVER + "/solr/" + SOLR_COLLECTION_NAME + "/update?commit=true"
+                solr_update_url = (
+                    SOLR_SERVER
+                    + "/solr/"
+                    + SOLR_COLLECTION_NAME
+                    + "/update?commit=true"
+                )
                 solr_update_headers = {"Content-Type": "application/xml"}
-                solr_update_payload = open(solr_file, 'rb').read()
-                requests.post(solr_update_url, headers=solr_update_headers, data=solr_update_payload)
+                solr_update_payload = open(solr_file, "rb").read()
+                requests.post(
+                    solr_update_url,
+                    headers=solr_update_headers,
+                    data=solr_update_payload,
+                )
             # print("res: " + res.text)
 
             # or use the terminal command which is much faster:
@@ -233,13 +275,13 @@ class lex:
     path = ""
     name = ""
     file_prefix = ""
-    head_letters = ""
-    letter_ids = ""
+    head_letters = []
+    letter_ids = []
     sort_key_func = None
     alphabetic_div_name = ""
     lemma_div = ""
-    start_file_num = ""
-    end_file_num = ""
+    start_file_num = 0
+    end_file_num = 0
 
 
 lsjlex = lex()
@@ -249,8 +291,64 @@ lsjlex.path = "import_data/greekrepo"
 lsjlex.file_prefix = "greatscott"
 # san is after π
 # koppa is after san
-lsjlex.head_letters = ["Α α", "Β β", "Γ γ", "Δ δ", "Ε ε", "Ϝ ϝ", "Ζ ζ", "Η η", "Θ θ", "Ι ι", "Κ κ", "Λ λ", "Μ μ", "Ν ν", "Ξ ξ", "Ο ο", "Π π", "Ϻ ϻ", "Ϟ ϟ", "Ρ ρ", "Σ σ", "Τ τ", "Υ υ", "Φ φ", "Χ χ", "Ψ ψ", "Ω ω"]
-lsjlex.letter_ids = ["cross*a", "crossb", "crossg", "crossd", "crosse", "cross*v", "cross*zz", "cross*hh", "cross*qq", "cross*ii", "cross*kk", "crossl", "crossm", "crossn", "cross*c", "cross*o", "crossp", "crosssan", "crosskoppa", "cross*r", "cross*s", "cross*t", "cross*uu", "cross*f", "cross*x", "cross*y", "cross*w"]
+lsjlex.head_letters = [
+    "Α α",
+    "Β β",
+    "Γ γ",
+    "Δ δ",
+    "Ε ε",
+    "Ϝ ϝ",
+    "Ζ ζ",
+    "Η η",
+    "Θ θ",
+    "Ι ι",
+    "Κ κ",
+    "Λ λ",
+    "Μ μ",
+    "Ν ν",
+    "Ξ ξ",
+    "Ο ο",
+    "Π π",
+    "Ϻ ϻ",
+    "Ϟ ϟ",
+    "Ρ ρ",
+    "Σ σ",
+    "Τ τ",
+    "Υ υ",
+    "Φ φ",
+    "Χ χ",
+    "Ψ ψ",
+    "Ω ω",
+]
+lsjlex.letter_ids = [
+    "cross*a",
+    "crossb",
+    "crossg",
+    "crossd",
+    "crosse",
+    "cross*v",
+    "cross*zz",
+    "cross*hh",
+    "cross*qq",
+    "cross*ii",
+    "cross*kk",
+    "crossl",
+    "crossm",
+    "crossn",
+    "cross*c",
+    "cross*o",
+    "crossp",
+    "crosssan",
+    "crosskoppa",
+    "cross*r",
+    "cross*s",
+    "cross*t",
+    "cross*uu",
+    "cross*f",
+    "cross*x",
+    "cross*y",
+    "cross*w",
+]
 lsjlex.sort_key_func = get_greek_sort_key
 lsjlex.alphabetic_div_name = "div1"
 lsjlex.lemma_div = "div2"
@@ -262,8 +360,58 @@ lewisshortlex.repo_url = "https://github.com/helmadik/LewisShortLogeion.git"
 lewisshortlex.repo_branch = "master"
 lewisshortlex.path = "import_data/latinrepo"
 lewisshortlex.file_prefix = "latindico"
-lewisshortlex.head_letters = ["A a", "B b", "C c", "D d", "E e", "F f", "G g", "H h", "I i", "K k", "L l", "M m", "N n", "O o", "P p", "Q q", "R r", "S s", "T t", "U u", "V v", "X x", "Y y", "Z z"]
-lewisshortlex.letter_ids = ["crossA1", "crossB", "crossC", "crossD", "crossE", "crossF", "crossG", "crossH", "crossI", "crossK", "crossL", "crossM", "crossN", "crossO1", "crossP", "crossQ", "crossR", "crossS", "crossT", "crossU", "crossV", "crossX", "crossY", "crossZ"]
+lewisshortlex.head_letters = [
+    "A a",
+    "B b",
+    "C c",
+    "D d",
+    "E e",
+    "F f",
+    "G g",
+    "H h",
+    "I i",
+    "K k",
+    "L l",
+    "M m",
+    "N n",
+    "O o",
+    "P p",
+    "Q q",
+    "R r",
+    "S s",
+    "T t",
+    "U u",
+    "V v",
+    "X x",
+    "Y y",
+    "Z z",
+]
+lewisshortlex.letter_ids = [
+    "crossA1",
+    "crossB",
+    "crossC",
+    "crossD",
+    "crossE",
+    "crossF",
+    "crossG",
+    "crossH",
+    "crossI",
+    "crossK",
+    "crossL",
+    "crossM",
+    "crossN",
+    "crossO1",
+    "crossP",
+    "crossQ",
+    "crossR",
+    "crossS",
+    "crossT",
+    "crossU",
+    "crossV",
+    "crossX",
+    "crossY",
+    "crossZ",
+]
 lewisshortlex.sort_key_func = get_latin_sort_key
 lewisshortlex.alphabetic_div_name = "div0"
 lewisshortlex.lemma_div = "div1"
@@ -275,8 +423,64 @@ pindarlex.repo_url = "https://github.com/helmadik/SlaterPindar.git"
 pindarlex.repo_branch = "main"
 pindarlex.path = "import_data/slaterrepo"
 pindarlex.file_prefix = "pindar_dico"
-pindarlex.head_letters = ["Α α", "Β β", "Γ γ", "Δ δ", "Ε ε", "Ϝ ϝ", "Ζ ζ", "Η η", "Θ θ", "Ι ι", "Κ κ", "Λ λ", "Μ μ", "Ν ν", "Ξ ξ", "Ο ο", "Π π", "Ϻ ϻ", "Ϟ ϟ", "Ρ ρ", "Σ σ", "Τ τ", "Υ υ", "Φ φ", "Χ χ", "Ψ ψ", "Ω ω"]
-pindarlex.letter_ids = ["cross*a", "crossb", "crossg", "crossd", "crosse", "cross*v", "cross*zz", "cross*hh", "cross*qq", "cross*ii", "cross*kk", "crossl", "crossm", "crossn", "cross*c", "cross*o", "crossp", "crosssan", "crosskoppa", "cross*r", "cross*s", "cross*t", "cross*uu", "cross*f", "cross*x", "cross*y", "cross*w"]
+pindarlex.head_letters = [
+    "Α α",
+    "Β β",
+    "Γ γ",
+    "Δ δ",
+    "Ε ε",
+    "Ϝ ϝ",
+    "Ζ ζ",
+    "Η η",
+    "Θ θ",
+    "Ι ι",
+    "Κ κ",
+    "Λ λ",
+    "Μ μ",
+    "Ν ν",
+    "Ξ ξ",
+    "Ο ο",
+    "Π π",
+    "Ϻ ϻ",
+    "Ϟ ϟ",
+    "Ρ ρ",
+    "Σ σ",
+    "Τ τ",
+    "Υ υ",
+    "Φ φ",
+    "Χ χ",
+    "Ψ ψ",
+    "Ω ω",
+]
+pindarlex.letter_ids = [
+    "cross*a",
+    "crossb",
+    "crossg",
+    "crossd",
+    "crosse",
+    "cross*v",
+    "cross*zz",
+    "cross*hh",
+    "cross*qq",
+    "cross*ii",
+    "cross*kk",
+    "crossl",
+    "crossm",
+    "crossn",
+    "cross*c",
+    "cross*o",
+    "crossp",
+    "crosssan",
+    "crosskoppa",
+    "cross*r",
+    "cross*s",
+    "cross*t",
+    "cross*uu",
+    "cross*f",
+    "cross*x",
+    "cross*y",
+    "cross*w",
+]
 pindarlex.sort_key_func = get_greek_sort_key
 pindarlex.alphabetic_div_name = "div1"
 pindarlex.lemma_div = "div2"
