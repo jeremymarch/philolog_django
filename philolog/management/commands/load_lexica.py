@@ -129,6 +129,7 @@ def process_lexica(lexica):
                 repo.pull("origin", lex.repo_branch)
                 print("pull complete\n")
 
+        transform = None
         if CONVERT_TEI_TO_HTML:
             print("converting tei to html...")
             trans = ET.parse("import_data/logeionxslt.xml").getroot()
@@ -200,7 +201,7 @@ def process_lexica(lexica):
                     # print(entry_def)
                     entry_root_for_xslt = parse_from_unicode(entry_def)
 
-                    new_dom = ET.transform(entry_root_for_xslt)
+                    new_dom = transform(entry_root_for_xslt)
                     html_string = ET.tostring(
                         new_dom, method="xml", encoding="utf-8"
                     ).decode("UTF-8")
