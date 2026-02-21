@@ -70,11 +70,7 @@ def get_words(request):
 
     word_prefix = query_data["w"]
 
-    scroll_position = ""  # will either be "top" or the word_id of the selected word
     selected_id, words = query_words(word_prefix, lex, page, page_size)
-
-    if selected_id == 0:
-        scroll_position = "top"
 
     response = {
         "selectId": selected_id,
