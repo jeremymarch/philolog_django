@@ -86,8 +86,7 @@ def get_words(request):
         "page": 0,
         "lastPage": 0,
         "lastPageUp": 0,
-        "scroll": scroll_position,
-        "query": "",
+        "query": word_prefix,
         "arrOptions": words,
     }
     return JsonResponse(response)
