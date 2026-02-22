@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATICFILES_DIRS = ["static"]
 # This is where 'collectstatic' will put all files for production
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_collected')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_collected")
 
 
 # Quick-start development settings - unsuitable for production
@@ -35,13 +35,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_collected')
 DEBUG = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
-if 'test' in sys.argv and os.environ.get("DJANGO_SECRET_KEY") is None:
+if "test" in sys.argv and os.environ.get("DJANGO_SECRET_KEY") is None:
     SECRET_KEY = get_random_secret_key()
 else:
     SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
-#ALLOWED_HOSTS = ["*"] # for testing, better to set by env variable:
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(" ")
+# ALLOWED_HOSTS = ["*"] # for testing, better to set by env variable:
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(" ")
 
 SOLR_SERVER = "http://localhost:8983"
 SOLR_COLLECTION_NAME = "localDocs2"
@@ -51,44 +51,44 @@ SOLR_IMPORT_DIR = "import_data/solr_import_docs/"
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'philolog.apps.PhilologConfig'
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "philolog.apps.PhilologConfig",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'philolog_django.urls'
+ROOT_URLCONF = "philolog_django.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'philolog_django.wsgi.application'
+WSGI_APPLICATION = "philolog_django.wsgi.application"
 
 
 # Database
@@ -115,16 +115,16 @@ WSGI_APPLICATION = 'philolog_django.wsgi.application'
 # else:
 #     DATABASES = {
 #         'default': {
-#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'ENGINE': 'django.db.backends.postgresql',
 #             'NAME': os.environ.get("DJANGO_DB_NAME"),
 #             'USER': os.environ.get("DJANGO_DB_USER"),
 #             'PASSWORD': os.environ.get("DJANGO_DB_PWD")
 #         }
 #     }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -133,16 +133,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -150,13 +150,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
-
-USE_L10N = True
 
 USE_TZ = True
 
@@ -164,9 +162,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
