@@ -40,7 +40,8 @@ if 'test' in sys.argv and os.environ.get("DJANGO_SECRET_KEY") is None:
 else:
     SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = ["*"] # for testing, better to set by env variable:
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(" ")
 
 SOLR_SERVER = "http://localhost:8983"
 SOLR_COLLECTION_NAME = "localDocs2"
