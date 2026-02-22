@@ -160,4 +160,4 @@ def fulltext_query(request):
 
 def react_home(request):
     """Respond to request for the React single page app."""
-    return render(request, "philolog/indexreact.html")
+    return render(request, "philolog/index.html")
