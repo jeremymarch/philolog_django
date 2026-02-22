@@ -1,1 +1,7 @@
 **/import_data
+.venv
+**/__pycache__
+.git
+.github
+.flake8
+db.zip

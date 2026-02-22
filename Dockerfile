@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1-labs
+
 # Use the official Python runtime image
 FROM python:3.14.3-slim
 
@@ -12,8 +14,11 @@ WORKDIR /app
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire Django project into the container
-COPY . /app/
+# Copy the entire Django project into the container, excluding the database
+COPY --exclude=db.sqlite3 . /app/
+
+# Copy the database separately into its own layer
+COPY db.sqlite3 /app/
 
 # Expose the port Django runs on
 EXPOSE 8000
