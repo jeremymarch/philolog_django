@@ -1,4 +1,5 @@
 import os
+from tkinter import TclError
 import unicodedata
 
 import git
@@ -120,7 +121,7 @@ def process_lexica(lexica):
             if lex_path_exists is False:
                 print("cloning repository: " + lex.repo_url + "...\n")
                 repo = git.Repo.clone_from(
-                    lex.repo_url, lex.path, branch=lex.repo_branch
+                    url=lex.repo_url, to_path=lex.path, branch=lex.repo_branch, depth=1
                 )
                 print("clone complete\n")
             else:
