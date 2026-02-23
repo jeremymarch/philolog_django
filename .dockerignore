@@ -5,3 +5,4 @@
 .github
 .flake8
 db.zip
+**/frontend

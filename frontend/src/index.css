@@ -1,0 +1,361 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+
+  color-scheme: light dark;
+  color: white;
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --dark-bg: #202124;
+
+  --author-color: #b10b0b;
+  --bib-color: #0c640c;
+  --author-color-dark: #f45757;
+  --bib-color-dark: #3dd171;
+  --ref-color: #9407b0;
+  --ref-color-dark: darkorange;
+  --gloss-color: black;
+  --foreign-color: blue;
+  --quote-color: blue;
+  --foreign-color-dark: #03a5fc;
+  --quote-color-dark: #03a5fc;
+  --attr-color: blue;
+  --attr-color-dark: #03a5fc;
+
+  --author-weight: normal;
+  --bib-weight: normal;
+  --ref-weight: normal;
+  --gloss-weight: bold;
+  --foreign-weight: normal;
+  --quote-weight: normal;
+}
+
+@font-face {
+  font-family: "WebNewAthenaUnicode";
+  src:
+    local("NewAthenaUnicode"),
+    url("assets/newathu5_8.woff") format("woff"),
+    url("assets/newathu5_8.ttf") format("ttf");
+}
+.philobuttons {
+  display: flex;
+  margin: 15px;
+  height: 26px;
+}
+.philobuttons button {
+  flex: 1;
+  flex-basis: auto;
+  font-family: helvetica, arial, sans-serif;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.dark .philobuttons button {
+  background-color: white;
+  color: black;
+}
+.dark .philobuttons button.active {
+  background-color: #444;
+  color: white;
+  border: 1px solid white;
+}
+
+.philolistcontainer {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  bottom: 10px;
+  background-color: var(--dark-bg);
+  margin: 0px;
+  border-radius: 14px;
+  width: 280px;
+}
+
+.philolist {
+  top: 10px;
+  left: 10px;
+  right: 20px;
+  background-color: var(--dark-bg);
+  color: white;
+  margin: 0px;
+}
+
+.philorow {
+  text-align: left;
+  padding-left: 10px;
+  box-sizing: border-box;
+  line-height: 2.5;
+}
+
+.selectedrow {
+  background-color: #444;
+  border: 1px solid white;
+  border-radius: 8px;
+}
+
+.philosearch {
+  position: relative;
+  top: 0;
+  left: 20px;
+  border: 2px solid white;
+  border-radius: 14px;
+  height: 21px;
+  padding: 4px 10px;
+  padding-bottom: 4px;
+  width: calc(100% - 62px);
+  padding-bottom: 6px;
+}
+
+.philodefcontainer {
+  position: absolute;
+  left: 300px;
+  right: 10px;
+  top: 70px;
+  bottom: 10px;
+  background-color: var(--dark-bg);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.philodef {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+body {
+  margin: 0px;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  font-family:
+    NewAthenaUnicode, WebNewAthenaUnicode, helvetica, arial, san-serif;
+}
+
+#logocontainer {
+  z-index: 999;
+  position: absolute;
+  top: 11px;
+  right: 0px;
+  height: 52px;
+  width: 243px;
+  margin: 0px;
+  padding: 0px;
+}
+#logo {
+  color: black;
+  margin: 0px;
+  padding: 0px;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  font-size: 28pt;
+  font-family: helvetica, arial, sans-serif;
+}
+.dark #logo {
+  color: white;
+}
+#hamburgercontainer {
+  position: absolute;
+  padding: 0px;
+  margin: 0px;
+  right: 1rem;
+  bottom: 4px;
+}
+#hamburger {
+  z-index: 999;
+  position: relative;
+}
+#hamburger {
+  background-color: white;
+  border: 1px solid #666;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+}
+#hamburger rect {
+  fill: black;
+}
+.dark #hamburger {
+  background-color: black;
+}
+.dark #hamburger rect {
+  fill: white;
+}
+
+.ftrowheaderlink {
+  color: blue;
+  cursor: pointer;
+}
+.dark .ftrowheaderlink {
+  color: #03a5fc;
+}
+.ftrowhead {
+  padding: 0px;
+  margin: 5px 0px;
+}
+.dark .fo {
+  color: blue;
+  color: var(--foreign-color-dark, blue);
+}
+.dark .qu {
+  color: blue;
+  color: var(--quote-color-dark, blue);
+}
+.fo {
+  color: blue;
+  color: var(--foreign-color, blue);
+}
+.qu {
+  color: blue;
+  color: var(--quote-color, blue);
+}
+.tr {
+  font-weight: bold;
+}
+.au {
+  color: #ac1b1b;
+  color: var(--author-color, #ac1b1b);
+}
+.dark .au {
+  color: #f45757;
+  color: var(--author-color-dark, #f45757);
+}
+.bi {
+  color: #0c640c;
+  color: var(--bib-color, #0c640c);
+}
+.dark .bi {
+  color: #3dd171;
+  color: var(--bib-color-dark, #3dd171);
+}
+.ti {
+  color: #8b22a0;
+  color: var(--ref-color, #8b22a0);
+}
+.dark .ti {
+  color: darkorange;
+  color: var(--ref-color-dark, darkorange);
+}
+.biblLink {
+  color: #0c640c;
+  color: var(--bib-color, #0c640c);
+}
+.dark .biblLink {
+  color: #3dd171;
+  color: var(--bib-color-dark, #3dd171);
+}
+.attrlink {
+  color: blue;
+  color: var(--attr-color, blue);
+}
+.dark .attrlink {
+  color: #03a5fc;
+  color: var(--attr-color-dark, #03a5fc);
+}
+.storelink {
+  color: blue;
+}
+.dark .storelink {
+  color: #03a5fc;
+}
+.qu:before {
+  content: '"';
+}
+.qu:after {
+  content: '"';
+}
+.label {
+  font-weight: bold;
+  position: absolute;
+  left: -36px;
+}
+.label:after {
+  content: " ";
+}
+.orth {
+  font-weight: bold;
+}
+.biblLink:link {
+  text-decoration: none;
+}
+.biblLink:visited {
+  text-decoration: none;
+}
+.biblLink:hover {
+  text-decoration: underline;
+}
+.biblLink:active {
+  text-decoration: none;
+}
+.bi {
+  text-decoration: none;
+}
+.l1 {
+  margin-left: 36px;
+  position: relative;
+}
+.l2 {
+  margin-left: 72px;
+  position: relative;
+}
+.l3 {
+  margin-left: 108px;
+  position: relative;
+}
+.l4 {
+  margin-left: 144px;
+  position: relative;
+}
+.l5 {
+  margin-left: 180px;
+  position: relative;
+}
+.orangetext {
+  color: orange;
+}
+.greentext {
+  color: green;
+}
+.bluetext {
+  color: blue;
+}
+.redtext {
+  color: red;
+}
+.boldtext {
+  font-weight: bold;
+}
+.blacktext {
+  color: black;
+}
+.attrlink {
+  color: blue;
+}
+HTML {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+body,
+html {
+  position: fixed;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

@@ -24,7 +24,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "static" /"philolog" / "react_build",
 ]
 # This is where 'collectstatic' will put all files for production
 # STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_collected")
