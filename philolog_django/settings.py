@@ -23,7 +23,9 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# STATICFILES_DIRS = ["static"]
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 # This is where 'collectstatic' will put all files for production
 # STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_collected")
 
@@ -48,6 +50,10 @@ SOLR_COLLECTION_NAME = "localDocs2"
 SOLR_IMPORT_DIR = "import_data/solr_import_docs/"
 
 
+DJANGO_VITE_ASSETS_PATH = BASE_DIR / "static" / "philolog" / "react_build"
+DJANGO_VITE_MANIFEST_PATH = DJANGO_VITE_ASSETS_PATH / ".vite" / "manifest.json"
+# In local development, you can set DJANGO_VITE_DEV_MODE = True to use Vite's HMR server
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -57,6 +63,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_vite",
     "philolog.apps.PhilologConfig",
 ]
 
