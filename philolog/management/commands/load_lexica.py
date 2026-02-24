@@ -1,5 +1,4 @@
 import os
-from tkinter import TclError
 import unicodedata
 
 import git
@@ -10,7 +9,7 @@ from django.core.management import BaseCommand
 
 from philolog.models import Word
 
-GIT_CLONE_PULL = False
+GIT_CLONE_PULL = True
 CONVERT_TEI_TO_HTML = True  # do xslt conversion from TEI to HTML
 IMPORT_TO_SOLR = False
 IMPORT_TO_DJANGO = True
@@ -200,7 +199,11 @@ def process_lexica(lexica):
                 html_string = ""
                 if CONVERT_TEI_TO_HTML:
                     # print(entry_def)
-                    entry_root_for_xslt = parse_from_unicode(entry_def)
+                    try:
+                        entry_root_for_xslt = parse_from_unicode(entry_def)
+                    except Exception as e:
+                        print("WARNING: There was an error in parse_from_unicode: ", e)
+                        continue
 
                     new_dom = transform(entry_root_for_xslt)
                     html_string = ET.tostring(
