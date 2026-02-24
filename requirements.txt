@@ -5,3 +5,5 @@ requests
 GitPython
 lxml
 django-vite
+gunicorn
+supervisor
