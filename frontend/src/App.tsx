@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import PhiloList from "./PhiloList";
 import PhiloDef from "./PhiloDef";
+import SettingsMenu from "./SettingsMenu";
 
 function App() {
   const [selectedWord, setSelectedWord] = useState<{
@@ -13,13 +14,7 @@ function App() {
     <>
       <div id="logocontainer">
         <div id="logo">philolog.us</div>
-        <div id="hamburgercontainer">
-          <svg id="hamburger" viewBox="0 0 120 120">
-            <rect x="10" y="30" width="100" height="12"></rect>
-            <rect x="10" y="56" width="100" height="12"></rect>
-            <rect x="10" y="82" width="100" height="12"></rect>
-          </svg>
-        </div>
+        <SettingsMenu />
       </div>
       <PhiloList
         onWordSelect={(id, lexicon) => setSelectedWord({ id, lexicon })}
