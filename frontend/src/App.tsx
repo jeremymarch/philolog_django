@@ -13,6 +13,13 @@ function App() {
     <>
       <div id="logocontainer">
         <div id="logo">philolog.us</div>
+        <div id="hamburgercontainer">
+          <svg id="hamburger" viewBox="0 0 120 120">
+            <rect x="10" y="30" width="100" height="12"></rect>
+            <rect x="10" y="56" width="100" height="12"></rect>
+            <rect x="10" y="82" width="100" height="12"></rect>
+          </svg>
+        </div>
       </div>
       <PhiloList
         onWordSelect={(id, lexicon) => setSelectedWord({ id, lexicon })}

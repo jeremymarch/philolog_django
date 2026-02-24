@@ -10,17 +10,17 @@
   -moz-osx-font-smoothing: grayscale;
   --dark-bg: #202124;
   --dark-text: #e0e0e0;
-  --dark-highlight: #3792ed;
+  --dark-highlight: #5999eb;
   --dark-highlight-text: white;
   --dark-backdrop: black;
   --dark-button-: #3792ed;
-  --dark-button-active: #3792ed;
+  --dark-button-active: #5999eb;
 
   --light-text: #202124;
   --light-bg: #e0e0e0;
   --light-highlight: #3792ed;
   --light-highlight-text: white;
-  --light-backdrop: #d0d0db;
+  --light-backdrop: #cececf;
   --light-button: #e0e0e0;
   --light-button-active: #3792ed;
 
