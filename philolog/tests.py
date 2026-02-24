@@ -13,12 +13,24 @@ class PhilologTests(TestCase):
 
         lemma = "λ"
         for i in range(0, 500):
-            w = Word.objects.create(word_id=i, lexicon=lex, word=lemma, definition=definition)
+            w = Word.objects.create(
+                word_id=i,
+                lexicon=lex,
+                word=lemma,
+                sort_key=lemma,
+                definition=definition,
+            )
             w.save()
 
         lemma = "ν"
         for i in range(500, 1000):
-            w = Word.objects.create(word_id=i, lexicon=lex, word=lemma, definition=definition)
+            w = Word.objects.create(
+                word_id=i,
+                lexicon=lex,
+                word=lemma,
+                sort_key=lemma,
+                definition=definition,
+            )
             w.save()
 
     def test_query_words(self):
@@ -30,7 +42,9 @@ class PhilologTests(TestCase):
 
         word_prefix = "μ"
         selected_id, words = query_words(word_prefix, lex, page, page_size)
-        self.assertEqual(len(words), 200, "There must be 100 words above and 100 words below prefix")
+        self.assertEqual(
+            len(words), 200, "There must be 100 words above and 100 words below prefix"
+        )
         self.assertEqual(selected_id, 500)
 
         word_prefix = "λ"
@@ -40,7 +54,9 @@ class PhilologTests(TestCase):
 
         word_prefix = "ν"
         selected_id, words = query_words(word_prefix, lex, page, page_size)
-        self.assertEqual(len(words), 200, "There must be 100 words above and 100 words below prefix")
+        self.assertEqual(
+            len(words), 200, "There must be 100 words above and 100 words below prefix"
+        )
         self.assertEqual(selected_id, 500)
 
         word_prefix = "ξ"
