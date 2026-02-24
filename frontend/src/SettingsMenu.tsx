@@ -41,39 +41,41 @@ const SettingsMenu = () => {
         <rect x="10" y="82" width="100" height="12"></rect>
       </svg>
       {isOpen && (
-        <div className="settings-modal">
-          <div className="theme-options">
-            <h4>Theme</h4>
-            <label>
-              <input
-                type="radio"
-                name="theme"
-                value="light"
-                checked={theme === "light"}
-                onChange={handleThemeChange}
-              />{" "}
-              Light
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="theme"
-                value="dark"
-                checked={theme === "dark"}
-                onChange={handleThemeChange}
-              />{" "}
-              Dark
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="theme"
-                value="system"
-                checked={theme === "system"}
-                onChange={handleThemeChange}
-              />{" "}
-              System
-            </label>
+        <div className="click-cover" onClick={() => setIsOpen(false)}>
+          <div className="settings-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="theme-options">
+              <h4>Theme</h4>
+              <label>
+                <input
+                  type="radio"
+                  name="theme"
+                  value="light"
+                  checked={theme === "light"}
+                  onChange={handleThemeChange}
+                />{" "}
+                Light
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="theme"
+                  value="dark"
+                  checked={theme === "dark"}
+                  onChange={handleThemeChange}
+                />{" "}
+                Dark
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="theme"
+                  value="system"
+                  checked={theme === "system"}
+                  onChange={handleThemeChange}
+                />{" "}
+                System
+              </label>
+            </div>
           </div>
         </div>
       )}
