@@ -3,14 +3,26 @@
   line-height: 1.5;
 
   color-scheme: light dark;
-  color: white;
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   --dark-bg: #202124;
+  --dark-text: #e0e0e0;
+  --dark-highlight: #3792ed;
+  --dark-highlight-text: white;
+  --dark-backdrop: black;
+  --dark-button-: #3792ed;
+  --dark-button-active: #3792ed;
+
+  --light-text: #202124;
+  --light-bg: #e0e0e0;
+  --light-highlight: #3792ed;
+  --light-highlight-text: white;
+  --light-backdrop: #d0d0db;
+  --light-button: #e0e0e0;
+  --light-button-active: #3792ed;
 
   --author-color: #b10b0b;
   --bib-color: #0c640c;
@@ -51,17 +63,23 @@
   flex-basis: auto;
   font-family: helvetica, arial, sans-serif;
   border-radius: 4px;
+  border: 0px solid transparent;
   text-align: center;
+  background-color: var(--light-button);
+  color: var(--light-text);
 }
 
 .dark .philobuttons button {
-  background-color: white;
-  color: black;
+  background-color: var(--dark-button);
+  color: var(--dark-text);
+}
+.philobuttons button.active {
+  background-color: var(--light-button-active);
+  color: var(--dark-text);
 }
 .dark .philobuttons button.active {
-  background-color: #444;
-  color: white;
-  border: 1px solid white;
+  background-color: var(--dark-button-active);
+  color: var(--dark-text);
 }
 
 .philolistcontainer {
@@ -69,19 +87,26 @@
   top: 10px;
   left: 10px;
   bottom: 10px;
-  background-color: var(--dark-bg);
+  background-color: var(--light-bg);
   margin: 0px;
   border-radius: 14px;
   width: 280px;
+}
+.dark .philolistcontainer {
+  background-color: var(--dark-bg);
 }
 
 .philolist {
   top: 10px;
   left: 10px;
   right: 20px;
-  background-color: var(--dark-bg);
-  color: white;
   margin: 0px;
+  background-color: var(--light-bg);
+  color: var(--light-text);
+}
+.dark .philolist {
+  color: var(--dark-text);
+  background-color: var(--dark-bg);
 }
 
 .philorow {
@@ -92,22 +117,33 @@
 }
 
 .selectedrow {
-  background-color: #444;
-  border: 1px solid white;
+  background-color: var(--light-highlight);
+  color: var(--light-highlight-text);
   border-radius: 8px;
+}
+.dark .selectedrow {
+  color: var(--dark-highlight-text);
+  background-color: var(--dark-highlight);
 }
 
 .philosearch {
   position: relative;
   top: 0;
   left: 20px;
-  border: 2px solid white;
+  border: 2px solid var(--light-text);
   border-radius: 14px;
   height: 21px;
   padding: 4px 10px;
   padding-bottom: 4px;
   width: calc(100% - 62px);
   padding-bottom: 6px;
+  background-color: var(--light-bg);
+  color: var(--light-text);
+}
+.dark .philosearch {
+  border: 2px solid var(--dark-text);
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
 }
 
 .philodefcontainer {
@@ -116,9 +152,12 @@
   right: 10px;
   top: 70px;
   bottom: 10px;
-  background-color: var(--dark-bg);
+  background-color: var(--light-bg);
   border-radius: 14px;
   padding: 20px;
+}
+.dark .philodefcontainer {
+  background-color: var(--dark-bg);
 }
 
 .philodef {
@@ -128,12 +167,18 @@
 }
 
 body {
+  background-color: var(--light-backdrop);
+  color: var(--light-text);
   margin: 0px;
   display: block;
   width: 100vw;
   height: 100vh;
   font-family:
     NewAthenaUnicode, WebNewAthenaUnicode, helvetica, arial, san-serif;
+}
+.dark body {
+  background-color: var(--dark-backdrop);
+  color: var(--dark-text);
 }
 
 #logocontainer {
@@ -147,7 +192,7 @@ body {
   padding: 0px;
 }
 #logo {
-  color: black;
+  color: var(--light-text);
   margin: 0px;
   padding: 0px;
   position: absolute;
@@ -157,7 +202,7 @@ body {
   font-family: helvetica, arial, sans-serif;
 }
 .dark #logo {
-  color: white;
+  color: var(--dark-text);
 }
 #hamburgercontainer {
   position: absolute;
@@ -185,7 +230,7 @@ body {
   background-color: black;
 }
 .dark #hamburger rect {
-  fill: white;
+  fill: var(--dark-text);
 }
 
 .ftrowheaderlink {

@@ -6,6 +6,7 @@ export default defineConfig({
   base: "/static/philolog/react_build/",
   plugins: [react()],
   build: {
+    emptyOutDir: true,
     manifest: true,
     outDir: "../static/philolog/react_build",
     rollupOptions: {
