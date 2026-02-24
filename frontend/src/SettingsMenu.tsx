@@ -7,10 +7,19 @@ const SettingsMenu = () => {
   const [theme, setTheme] = useState("system");
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "system";
-    setTheme(savedTheme);
-    applyTheme(savedTheme);
-  }, []);
+    // Apply "system" theme initially to ensure a clean state
+    applyTheme("system");
+    
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      setTheme(savedTheme); // Update state to saved theme
+      applyTheme(savedTheme); // Apply saved theme
+    } else {
+      // If no saved theme, "system" is already the state and applied.
+      // We explicitly save "system" to localStorage so it's consistent for next loads
+      localStorage.setItem("theme", "system");
+    }
+  }, []); // Run only once on mount
 
   const applyTheme = (selectedTheme: string) => {
     const htmlEl = document.documentElement;
