@@ -45,12 +45,12 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [lexicon, setLexicon] = useState("lsj");
   const [results, setResults] = useState<ResponseData>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
   const [selectedWordId, setSelectedWordId] = useState<number | null>(null);
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [scrollOnEdge, setScrollOnEdge] = useState(true); // New state variable
 
   const debouncedSearchTerm = useDebounce(searchTerm, 350);
@@ -238,8 +238,11 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
               const clientHeight = listElement.clientHeight;
               const currentScrollTop = listElement.scrollTop;
 
-              const firstVisibleIndex = Math.floor(currentScrollTop / rowHeight);
-              const lastVisibleIndex = Math.floor((currentScrollTop + clientHeight) / rowHeight) - 1;
+              const firstVisibleIndex = Math.floor(
+                currentScrollTop / rowHeight,
+              );
+              const lastVisibleIndex =
+                Math.floor((currentScrollTop + clientHeight) / rowHeight) - 1;
 
               if (event.key === "ArrowDown") {
                 // If new selection is below the second-to-last visible row
@@ -338,6 +341,24 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
       />
+      {isLoading && (
+        <div id="lemmataloading">
+          <div className="lds-spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      )}
       <List
         listRef={listRef}
         rowProps={{ results }}
