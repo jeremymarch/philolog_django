@@ -270,7 +270,9 @@ class Command(BaseCommand):
     #     parser.add_argument('--path', type=str)
 
     def handle(self, *args, **kwargs):
-        lexica = [lsjlex, lewisshortlex, pindarlex]
+        # lexica = [lsjlex, lewisshortlex, pindarlex]
+        # pindar is a private repo, so need to authenticate; skip for now
+        lexica = [lsjlex, lewisshortlex]
         process_lexica(lexica)
 
 
