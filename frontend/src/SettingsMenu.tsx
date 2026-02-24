@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import "./SettingsMenu.css";
 
@@ -9,7 +8,7 @@ const SettingsMenu = () => {
   useEffect(() => {
     // Apply "system" theme initially to ensure a clean state
     applyTheme("system");
-    
+
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       setTheme(savedTheme); // Update state to saved theme
@@ -24,10 +23,14 @@ const SettingsMenu = () => {
   const applyTheme = (selectedTheme: string) => {
     const htmlEl = document.documentElement;
     htmlEl.classList.remove("dark", "light");
-    if (selectedTheme === "dark") {
+    if (
+      (window.matchMedia("(prefers-color-scheme: dark)").matches &&
+        selectedTheme !== "light") ||
+      selectedTheme === "dark"
+    ) {
       htmlEl.classList.add("dark");
-    } else if (selectedTheme === "light") {
-      htmlEl.classList.add("light");
+    } else {
+      htmlEl.classList.remove("dark");
     }
   };
 
