@@ -3,7 +3,7 @@ import json
 import requests
 from django.http import JsonResponse
 from django.shortcuts import render
-
+from itertools import chain
 from .models import Word
 
 # def error404(request, exception):
@@ -33,28 +33,21 @@ def query_words(word_prefix, lex, page, page_size):
     if page <= 0:
         before_words = Word.objects.filter(
             sort_key__lt=word_prefix, lexicon=lex
-        ).order_by("-sort_key", "word_id")[0:page_size]
+        ).order_by("-sort_key", "word_id").values_list("word_id", "word")[0:page_size]
     if page >= 0:
         after_words = Word.objects.filter(
             sort_key__gte=word_prefix, lexicon=lex
-        ).order_by("sort_key", "word_id")[0:page_size]
+        ).order_by("sort_key", "word_id").values_list("word_id", "word")[0:page_size]
 
-    words = []
-    for w in before_words:
-        if len(after_words) == 0:
-            selected_id = (
-                w.word_id
-            )  # if there are no words after, select last word of the before words
-        words.append([w.word_id, w.word])
-
-    words.reverse()  # before words are selected in reverse order
     selected_id = 0
+    if len(after_words) == 0:
+        # before_words hasn't been reversed yet so 0 is the last word alphabetically
+        selected_id = before_words[0][0]
+    else:
+        selected_id = after_words[0][0]
 
-    for idx, w in enumerate(after_words):
-        if idx == 0 and len(before_words) > 0:
-            selected_id = w.word_id  # first result of this query is the selected word
-        words.append([w.word_id, w.word])
-
+    # itertools's chain function is the most efficient way to reverse and combine these QuerySets
+    words = list(chain(reversed(before_words), after_words))
     return selected_id, words
 
 

@@ -8,12 +8,12 @@
     "src": "src/assets/newathu5_8.woff"
   },
   "src/main.tsx": {
-    "file": "assets/main-CcWuMWrA.js",
+    "file": "assets/main-UHUQbmLl.js",
     "name": "main",
     "src": "src/main.tsx",
     "isEntry": true,
     "css": [
-      "assets/main-CdpMM5Yo.css"
+      "assets/main-BKhMMT2L.css"
     ],
     "assets": [
       "assets/newathu5_8-SpAj_jIQ.woff",

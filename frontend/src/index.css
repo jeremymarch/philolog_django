@@ -10,19 +10,19 @@
   -moz-osx-font-smoothing: grayscale;
   --dark-bg: #202124;
   --dark-text: #e0e0e0;
-  --dark-highlight: #5999eb;
+  --dark-highlight: #1e90ff;
   --dark-highlight-text: white;
   --dark-backdrop: black;
   --dark-button-: #3792ed;
-  --dark-button-active: #5999eb;
+  --dark-button-active: #1e90ff;
 
   --light-text: #202124;
   --light-bg: #e0e0e0;
-  --light-highlight: #3792ed;
+  --light-highlight: #5682db;
   --light-highlight-text: white;
   --light-backdrop: #cececf;
   --light-button: #e0e0e0;
-  --light-button-active: #3792ed;
+  --light-button-active: #5682db;
 
   --author-color: #b10b0b;
   --bib-color: #0c640c;
@@ -67,6 +67,7 @@
   text-align: center;
   background-color: var(--light-button);
   color: var(--light-text);
+  cursor: pointer;
 }
 
 .dark .philobuttons button {
@@ -214,8 +215,6 @@ body {
 #hamburger {
   z-index: 999;
   position: relative;
-}
-#hamburger {
   background-color: white;
   border: 1px solid #666;
   border-radius: 4px;
