@@ -189,6 +189,14 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     setSearchTerm(value);
   };
 
+  const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      if (selectedWordId !== null) {
+        onWordSelect(selectedWordId, lexicon);
+      }
+    }
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
       setSearchTerm("");
@@ -235,7 +243,8 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       if (newIndex !== -1) {
         const [newWordId] = results.arrOptions[newIndex];
         setSelectedWordId(newWordId);
-        onWordSelect(newWordId, lexicon);
+        //use key up to select the word, so there are no extra api calls during fast scrolling
+        //onWordSelect(newWordId, lexicon);
         if (listRef.current) {
           if (scrollOnEdge) {
             const listElement = listRef.current.element;
@@ -346,6 +355,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         value={searchTerm}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
       />
       {isLoading && (
         <div id="lemmataloading">
