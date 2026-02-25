@@ -8,21 +8,25 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --dark-bg: #202124;
-  --dark-text: #e0e0e0;
-  --dark-highlight: #1e90ff;
+  --blue-highlight: #4487dc;
+  --off-white: #e0e0e0;
+  --off-black: #202124;
+
+  --dark-bg: var(--off-black);
+  --dark-text: var(--off-white);
+  --dark-highlight: var(--blue-highlight);
   --dark-highlight-text: white;
   --dark-backdrop: black;
-  --dark-button-: #3792ed;
-  --dark-button-active: #1e90ff;
+  --dark-button: var(--off-black);
+  --dark-button-active: var(--blue-highlight);
 
-  --light-text: #202124;
-  --light-bg: #e0e0e0;
-  --light-highlight: #5682db;
+  --light-text: var(--off-black);
+  --light-bg: var(--off-white);
+  --light-highlight: var(--blue-highlight);
   --light-highlight-text: white;
   --light-backdrop: #cececf;
-  --light-button: #e0e0e0;
-  --light-button-active: #5682db;
+  --light-button: var(--off-white);
+  --light-button-active: var(--blue-highlight);
 
   --author-color: #b10b0b;
   --bib-color: #0c640c;

@@ -1,19 +1,28 @@
-# a rewrite of philolog.us for react and django
+# A Rewrite of philolog.us using react and django
 
-To import data:  
+## Installation
+git clone https://github.com/jeremymarch/philolog_django.git  
+cd philolog_django  
+python3 -m venv .venv  
+source .venv/bin/activate  
+pip install -r requirements.txt  
+npm --prefix frontend install  
+python manage.py migrate  
+ 
+## To import data:  
 python manage.py load_lexica   
 
-To run development server:  
-npm --prefix frontend run build && python manage.py runserver  
+## To run development server:  
+npm --prefix frontend run build && ALLOWED_HOSTS="localhost" DJANGO_SECRET_KEY="ABC" python manage.py runserver  
 
 browse:  
 http://localhost:8000/  
 
-To build for production:  
+## To build for production:  
 docker build --load --builder multi-platform-builder --platform=linux/amd64,linux/arm64 -t philologus-react-django:tag .  
 
 run:  
-docker run -e ALLOWED_HOSTS="* localhost 127.0.0.1" -p 8080:80 philologus-react-django:tag  
+docker run -e ALLOWED_HOSTS="* localhost 127.0.0.1" -p 8000:80 philologus-react-django:tag  
 
 browse:  
-http://localhost:8080/
+http://localhost:8000/
