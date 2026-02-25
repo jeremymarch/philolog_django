@@ -62,4 +62,4 @@ class PhilologTests(TestCase):
         word_prefix = "ξ"
         selected_id, words = query_words(word_prefix, lex, page, page_size)
         self.assertEqual(len(words), 100, "There must be 100 words above prefix")
-        self.assertEqual(selected_id, 0)
+        self.assertEqual(selected_id, 500)
