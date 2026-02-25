@@ -372,7 +372,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         rowCount={results?.arrOptions?.length ?? 0}
         rowHeight={40}
         style={{ width: 260, height: "calc(100% - 120px)" }}
-        className="philolist"
+        className="philolist no-scrollbars"
       />
     </div>
   );
