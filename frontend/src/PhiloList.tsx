@@ -43,7 +43,10 @@ interface PhiloListProps {
 
 const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [lexicon, setLexicon] = useState("lsj");
+  const [lexicon, setLexiconState] = useState(() => {
+    const savedLexicon = localStorage.getItem("lexicon");
+    return savedLexicon || "lsj";
+  });
   const [results, setResults] = useState<ResponseData>();
   const [isLoading, setIsLoading] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,6 +55,11 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [scrollOnEdge, setScrollOnEdge] = useState(true); // New state variable
+
+  const setLexiconAndSave = (newLexicon: string) => {
+    setLexiconState(newLexicon);
+    localStorage.setItem("lexicon", newLexicon);
+  };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 350);
   const listRef = useListRef(null as unknown as ListImperativeAPI);
@@ -104,19 +112,17 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
 
   const fetchData = useCallback(
     async (query: string, currentLexicon: string) => {
-      // if (!query) {
-      //   setResults(undefined);
-      //   return;
-      // }
-
+      setSelectedWordId(null);
       setIsLoading(true);
       setError(null);
+
       try {
         const response = await axios.get<ResponseData>(
           `query?&query=%7B%22regex%22%3A0%2C%22lexicon%22%3A%22${currentLexicon}%22%2C%22tag_id%22%3A0%2C%22root_id%22%3A0%2C%22w%22%3A%22${query}%22%7D&n=101&idprefix=lemmata&x=0.17297130510758496&requestTime=1771393815484&page=0&mode=context`,
         );
         setResults(response.data);
-        if (response.data.selectId !== null) {
+
+        if (response.data.selectId !== null && response.data.query !== "") {
           setSelectedWordId(response.data.selectId);
           onWordSelectRef.current(response.data.selectId, currentLexicon);
         }
@@ -189,15 +195,15 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       setShouldScrollToTop(true);
     } else if (event.key === "1") {
       event.preventDefault();
-      setLexicon("lsj");
+      setLexiconAndSave("lsj");
       setSearchTerm("");
     } else if (event.key === "2") {
       event.preventDefault();
-      setLexicon("slater");
+      setLexiconAndSave("slater");
       setSearchTerm("");
     } else if (event.key === "3") {
       event.preventDefault();
-      setLexicon("ls");
+      setLexiconAndSave("ls");
       setSearchTerm("");
     } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       if (!results || !results.arrOptions || results.arrOptions.length === 0)
@@ -296,7 +302,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
 
   return (
     <div
-      className="philolistcontainer"
+      className={`philolistcontainer ${lexicon}`}
       onClick={() => {
         inputRef.current?.focus();
       }}
@@ -304,7 +310,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       <div className="philobuttons">
         <button
           onClick={() => {
-            setLexicon("lsj");
+            setLexiconAndSave("lsj");
             setSearchTerm("");
           }}
           disabled={lexicon === "lsj"}
@@ -314,7 +320,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         </button>
         <button
           onClick={() => {
-            setLexicon("slater");
+            setLexiconAndSave("slater");
             setSearchTerm("");
           }}
           disabled={lexicon === "slater"}
@@ -324,7 +330,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         </button>
         <button
           onClick={() => {
-            setLexicon("ls");
+            setLexiconAndSave("ls");
             setSearchTerm("");
           }}
           disabled={lexicon === "ls"}
