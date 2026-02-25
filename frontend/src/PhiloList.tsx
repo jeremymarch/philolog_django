@@ -253,21 +253,18 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
               const clientHeight = listElement.clientHeight;
               const currentScrollTop = listElement.scrollTop;
 
-              const firstVisibleIndex = Math.floor(
-                currentScrollTop / rowHeight,
-              );
+              const firstVisibleIndex = Math.ceil(currentScrollTop / rowHeight);
               const lastVisibleIndex =
                 Math.floor((currentScrollTop + clientHeight) / rowHeight) - 1;
 
               if (event.key === "ArrowDown") {
-                // If new selection is below the second-to-last visible row
-                if (newIndex > lastVisibleIndex - 1) {
-                  listElement.scrollTop += rowHeight;
+                if (newIndex >= lastVisibleIndex) {
+                  listElement.scrollTop =
+                    (newIndex + 2) * rowHeight - clientHeight;
                 }
               } else if (event.key === "ArrowUp") {
-                // If new selection is above the second visible row
-                if (newIndex < firstVisibleIndex + 1) {
-                  listElement.scrollTop -= rowHeight;
+                if (newIndex <= firstVisibleIndex) {
+                  listElement.scrollTop = (newIndex - 1) * rowHeight;
                 }
               }
             }
