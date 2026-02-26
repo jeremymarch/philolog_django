@@ -82,6 +82,7 @@
   background-color: var(--light-button);
   color: var(--light-text);
   cursor: pointer;
+  margin: 0px 4px;
 }
 
 .dark .philobuttons button {
