@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/static/philolog/react_build/",
+  base: "/static/",
   plugins: [react()],
   build: {
     emptyOutDir: true,

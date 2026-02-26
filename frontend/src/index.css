@@ -9,6 +9,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   --blue-highlight: #4487dc;
+  --light-white-bg: #eceded;
   --off-white: #e0e0e0;
   --off-black: #202124;
 
@@ -21,11 +22,11 @@
   --dark-button-active: var(--blue-highlight);
 
   --light-text: var(--off-black);
-  --light-bg: var(--off-white);
+  --light-bg: var(--light-white-bg);
   --light-highlight: var(--blue-highlight);
   --light-highlight-text: white;
-  --light-backdrop: #cececf;
-  --light-button: var(--off-white);
+  --light-backdrop: #c9cbcb;
+  --light-button: var(--light-white-bg);
   --light-button-active: var(--blue-highlight);
 
   --author-color: #b10b0b;
@@ -54,9 +55,18 @@
   font-family: "WebNewAthenaUnicode";
   src:
     local("NewAthenaUnicode"),
-    url("assets/newathu5_8.woff") format("woff"),
-    url("assets/newathu5_8.ttf") format("ttf");
+    url("assets/newathu5_8_v2.woff2") format("woff2"),
+    url("assets/newathu5_8_v2.woff") format("woff"),
+    url("assets/newathu5_8_v2.ttf") format("ttf");
 }
+
+*:focus {
+  outline: 1px solid black;
+}
+.dark *:focus {
+  outline: 1px solid white;
+}
+
 .philobuttons {
   display: flex;
   margin: 15px;
@@ -144,6 +154,14 @@
   padding-bottom: 6px;
   background-color: var(--light-bg);
   color: var(--light-text);
+}
+.philosearch:focus-visible,
+.philosearch:focus {
+  outline: 1px solid black;
+}
+.dark .philosearch:focus-visible,
+.dark .philosearch:focus {
+  outline: 1px solid var(--dark-text);
 }
 .dark .philosearch {
   border: 2px solid var(--dark-text);
@@ -505,4 +523,21 @@ html {
 
 .no-scrollbars::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #777;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background-color: #bbb;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #666;
+}
+.dark ::-webkit-scrollbar-track {
+  background-color: #333;
 }
