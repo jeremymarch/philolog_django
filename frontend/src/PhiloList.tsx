@@ -5,6 +5,7 @@ import {
   useListRef,
   type ListImperativeAPI,
 } from "react-window";
+import { useInfiniteLoader } from "react-window-infinite-loader";
 import axios from "axios";
 import { useDebounce } from "./useDebounce";
 
@@ -135,6 +136,42 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     },
     [],
   );
+
+  const loadMoreItems = async (startIndex: number, stopIndex: number) => {
+    if (isLoading || !results || !results.arrOptions) return;
+    
+    // Check if we are at the end
+    if (stopIndex < results.arrOptions.length) return;
+
+    const lastItem = results.arrOptions[results.arrOptions.length - 1];
+    const lastWord = lastItem[1];
+    
+    try {
+      setIsLoading(true);
+      const response = await axios.get<ResponseData>(
+        `query?query={"regex":0,"lexicon":"${lexicon}","tag_id":0,"root_id":0,"w":"${lastWord}"}&n=101&idprefix=lemmata&x=0.17297130510758496&requestTime=${Date.now()}&page=1&mode=context`,
+      );
+      
+      if (response.data.arrOptions && response.data.arrOptions.length > 0) {
+        // Filter out the first item if it's the same as our last item
+        const newItems = response.data.arrOptions.filter(item => item[0] !== lastItem[0]);
+        
+        if (newItems.length > 0) {
+          setResults(prev => {
+             if (!prev) return response.data;
+             return {
+               ...prev,
+               arrOptions: [...prev.arrOptions, ...newItems]
+             };
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load more items:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData(debouncedSearchTerm, lexicon);
@@ -284,7 +321,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   }: RowComponentProps<{
     results: ResponseData | undefined;
   }>) {
-    if (results !== undefined) {
+    if (results !== undefined && results.arrOptions[index]) {
       const wordId = results.arrOptions[index][0];
       const isSelected = wordId === selectedWordId;
       return (
@@ -302,9 +339,22 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         </div>
       );
     } else {
-      return null;
+      return (
+        <div className="philorow" style={style}>
+          ...
+        </div>
+      );
     }
   }
+
+  const rowCount = results?.arrOptions?.length ?? 0;
+  const itemCount = rowCount > 0 ? rowCount + 50 : 0;
+
+  const onRowsRendered = useInfiniteLoader({
+    isRowLoaded: (index) => index < rowCount,
+    loadMoreRows: loadMoreItems,
+    rowCount: itemCount,
+  });
 
   return (
     <div
@@ -374,9 +424,10 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       )}
       <List
         listRef={listRef}
+        onRowsRendered={onRowsRendered}
         rowProps={{ results }}
         rowComponent={PhiloListRowComponent}
-        rowCount={results?.arrOptions?.length ?? 0}
+        rowCount={itemCount}
         rowHeight={40}
         style={{ width: 260, height: "calc(100% - 120px)" }}
         className="philolist no-scrollbars"
