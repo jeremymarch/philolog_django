@@ -118,7 +118,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
 
       try {
         const response = await axios.get<ResponseData>(
-          `query?&query=%7B%22regex%22%3A0%2C%22lexicon%22%3A%22${currentLexicon}%22%2C%22tag_id%22%3A0%2C%22root_id%22%3A0%2C%22w%22%3A%22${query}%22%7D&n=101&idprefix=lemmata&x=0.17297130510758496&requestTime=1771393815484&page=0&mode=context`,
+          `query?query={"regex":0,"lexicon":"${currentLexicon}","tag_id":0,"root_id":0,"w":"${query}"}&n=101&idprefix=lemmata&x=0.17297130510758496&requestTime=1771393815484&page=0&mode=context`,
         );
         setResults(response.data);
 
