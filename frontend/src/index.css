@@ -60,6 +60,14 @@
     url("assets/newathu5_8_v2.ttf") format("ttf");
 }
 
+input[type="radio"] {
+  accent-color: var(--blue-highlight);
+}
+
+.dark input[type="radio"] {
+  accent-color: var(--blue-highlight);
+}
+
 *:focus {
   outline: 1px solid black;
 }
