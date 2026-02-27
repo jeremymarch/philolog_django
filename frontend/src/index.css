@@ -80,7 +80,12 @@ input[type="radio"] {
   margin: 15px;
   height: 26px;
 }
-.philobuttons button {
+.philobuttons input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+.philobuttons label {
   flex: 1;
   flex-basis: auto;
   font-family: helvetica, arial, sans-serif;
@@ -92,16 +97,15 @@ input[type="radio"] {
   cursor: pointer;
   margin: 0px 4px;
 }
-
-.dark .philobuttons button {
+.dark .philobuttons label {
   background-color: var(--dark-button);
   color: var(--dark-text);
 }
-.philobuttons button.active {
+.philobuttons input[type="radio"]:checked + label {
   background-color: var(--light-button-active);
   color: var(--dark-text);
 }
-.dark .philobuttons button.active {
+.dark .philobuttons input[type="radio"]:checked + label {
   background-color: var(--dark-button-active);
   color: var(--dark-text);
 }

@@ -314,36 +314,42 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       }}
     >
       <div className="philobuttons">
-        <button
-          onClick={() => {
+        <input
+          type="radio"
+          name="lexicon-select"
+          value="lsj"
+          id="lsj-radio"
+          checked={lexicon === "lsj"}
+          onChange={() => {
             setLexiconAndSave("lsj");
-            setSearchTerm("");
+            //setSearchTerm("");
           }}
-          disabled={lexicon === "lsj"}
-          className={lexicon === "lsj" ? "active" : ""}
-        >
-          LSJ
-        </button>
-        <button
-          onClick={() => {
+        />
+        <label htmlFor="lsj-radio">LSJ</label>
+        <input
+          type="radio"
+          name="lexicon-select"
+          value="slater"
+          id="slater-radio"
+          checked={lexicon === "slater"}
+          onChange={() => {
             setLexiconAndSave("slater");
-            setSearchTerm("");
+            //setSearchTerm("");
           }}
-          disabled={lexicon === "slater"}
-          className={lexicon === "slater" ? "active" : ""}
-        >
-          Slater
-        </button>
-        <button
-          onClick={() => {
+        />
+        <label htmlFor="slater-radio">Slater</label>
+        <input
+          type="radio"
+          name="lexicon-select"
+          value="ls"
+          id="ls-radio"
+          checked={lexicon === "ls"}
+          onChange={() => {
             setLexiconAndSave("ls");
-            setSearchTerm("");
+            //setSearchTerm("");
           }}
-          disabled={lexicon === "ls"}
-          className={lexicon === "ls" ? "active" : ""}
-        >
-          Lewis & Short
-        </button>
+        />
+        <label htmlFor="ls-radio">Lewis & Short</label>
       </div>
       <input
         ref={inputRef}
