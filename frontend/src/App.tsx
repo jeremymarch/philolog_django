@@ -12,10 +12,6 @@ function App() {
 
   return (
     <>
-      <div id="logocontainer">
-        <div id="logo">philolog.us</div>
-        <SettingsMenu />
-      </div>
       <PhiloList
         onWordSelect={(id, lexicon) => setSelectedWord({ id, lexicon })}
       />
@@ -23,6 +19,10 @@ function App() {
         wordId={selectedWord?.id ?? null}
         lexicon={selectedWord?.lexicon ?? null}
       />
+      <div id="logocontainer">
+        <div id="logo">philolog.us</div>
+        <SettingsMenu />
+      </div>
     </>
   );
 }

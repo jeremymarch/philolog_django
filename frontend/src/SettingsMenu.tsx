@@ -1,9 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./SettingsMenu.css";
 
 const SettingsMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState("system");
+  const selectedOptionRef = useRef<HTMLInputElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(isOpen);
+
+  useEffect(() => {
+    if (isOpen && selectedOptionRef.current) {
+      selectedOptionRef.current.focus();
+    } else if (!isOpen && wasOpen.current) {
+      hamburgerRef.current?.focus();
+    }
+    wasOpen.current = isOpen;
+  }, [isOpen]);
 
   useEffect(() => {
     // Apply "system" theme initially to ensure a clean state
@@ -41,17 +53,28 @@ const SettingsMenu = () => {
     applyTheme(newTheme);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div id="hamburgercontainer">
-      <svg
+      <button
         id="hamburger"
-        viewBox="0 0 120 120"
+        ref={hamburgerRef}
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Settings"
       >
-        <rect x="10" y="30" width="100" height="12"></rect>
-        <rect x="10" y="56" width="100" height="12"></rect>
-        <rect x="10" y="82" width="100" height="12"></rect>
-      </svg>
+        <svg viewBox="0 0 120 120">
+          <rect x="10" y="30" width="100" height="12"></rect>
+          <rect x="10" y="56" width="100" height="12"></rect>
+          <rect x="10" y="82" width="100" height="12"></rect>
+        </svg>
+      </button>
       {isOpen && (
         <div className="click-cover" onClick={() => setIsOpen(false)}>
           <div className="settings-modal" onClick={(e) => e.stopPropagation()}>
@@ -64,6 +87,8 @@ const SettingsMenu = () => {
                   value="light"
                   checked={theme === "light"}
                   onChange={handleThemeChange}
+                  onKeyDown={handleKeyDown}
+                  ref={theme === "light" ? selectedOptionRef : null}
                 />{" "}
                 Light
               </label>
@@ -74,6 +99,8 @@ const SettingsMenu = () => {
                   value="dark"
                   checked={theme === "dark"}
                   onChange={handleThemeChange}
+                  onKeyDown={handleKeyDown}
+                  ref={theme === "dark" ? selectedOptionRef : null}
                 />{" "}
                 Dark
               </label>
@@ -84,6 +111,8 @@ const SettingsMenu = () => {
                   value="system"
                   checked={theme === "system"}
                   onChange={handleThemeChange}
+                  onKeyDown={handleKeyDown}
+                  ref={theme === "system" ? selectedOptionRef : null}
                 />{" "}
                 System
               </label>

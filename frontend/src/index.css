@@ -233,7 +233,7 @@ body {
   padding: 0px;
   margin: 0px;
   right: 1rem;
-  bottom: 4px;
+  bottom: 13px;
 }
 #hamburger {
   z-index: 999;
@@ -244,6 +244,14 @@ body {
   cursor: pointer;
   height: 30px;
   width: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#hamburger svg {
+  height: 24px;
+  width: 24px;
 }
 #hamburger rect {
   fill: black;
