@@ -213,6 +213,26 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       event.preventDefault();
       setLexiconAndSave("ls");
       setSearchTerm("");
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      if (lexicon === "lsj") {
+        setLexiconAndSave("ls");
+      } else if (lexicon === "slater") {
+        setLexiconAndSave("lsj");
+      } else if (lexicon === "ls") {
+        setLexiconAndSave("slater");
+      }
+      setSearchTerm("");
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      if (lexicon === "lsj") {
+        setLexiconAndSave("slater");
+      } else if (lexicon === "slater") {
+        setLexiconAndSave("ls");
+      } else if (lexicon === "ls") {
+        setLexiconAndSave("lsj");
+      }
+      setSearchTerm("");
     } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       if (!results || !results.arrOptions || results.arrOptions.length === 0)
         return;
@@ -324,6 +344,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
             setLexiconAndSave("lsj");
             //setSearchTerm("");
           }}
+          tabIndex={-1}
         />
         <label htmlFor="lsj-radio">LSJ</label>
         <input
@@ -336,6 +357,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
             setLexiconAndSave("slater");
             //setSearchTerm("");
           }}
+          tabIndex={-1}
         />
         <label htmlFor="slater-radio">Slater</label>
         <input
@@ -348,6 +370,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
             setLexiconAndSave("ls");
             //setSearchTerm("");
           }}
+          tabIndex={-1}
         />
         <label htmlFor="ls-radio">Lewis & Short</label>
       </div>
