@@ -139,23 +139,34 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
 
   const itemCount = results ? results.arrOptions.length + 50 : 50;
   const loadMoreItems = async (startIndex: number, stopIndex: number) => {
-    if (isLoading || !results || !results.arrOptions) return;
+    if (
+      isLoading ||
+      !results ||
+      !results.arrOptions ||
+      results.arrOptions.length === 0
+    )
+      return;
 
     // Check if we are at the end
     if (stopIndex < results.arrOptions.length) return;
 
     const lastItem = results.arrOptions[results.arrOptions.length - 1];
 
+    // Calculate absolute IDs based on the last known item's ID
+    const offset = lastItem[0] - (results.arrOptions.length - 1);
+    const actualStart = startIndex + offset;
+    const actualEnd = stopIndex + offset;
+
     try {
       setIsLoading(true);
       const response = await axios.get<ResponseData>(
-        `range?start=${startIndex}&end=${stopIndex}&lexicon=${lexicon}&requestTime=${Date.now()}`,
+        `range?start=${actualStart}&end=${actualEnd}&lexicon=${lexicon}&requestTime=${Date.now()}`,
       );
 
       if (response.data.arrOptions && response.data.arrOptions.length > 0) {
-        // Filter out the first item if it's the same as our last item
+        // Filter out items we already have
         const newItems = response.data.arrOptions.filter(
-          (item) => item[0] !== lastItem[0],
+          (item) => item[0] > lastItem[0],
         );
 
         if (newItems.length > 0) {
