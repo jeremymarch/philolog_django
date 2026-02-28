@@ -137,6 +137,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     [],
   );
 
+  const itemCount = results ? results.arrOptions.length + 50 : 50;
   const loadMoreItems = async (startIndex: number, stopIndex: number) => {
     if (isLoading || !results || !results.arrOptions) return;
 
@@ -144,7 +145,6 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     if (stopIndex < results.arrOptions.length) return;
 
     const lastItem = results.arrOptions[results.arrOptions.length - 1];
-    const lastWord = lastItem[1];
 
     try {
       setIsLoading(true);
@@ -350,7 +350,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   }
 
   const rowCount = results?.arrOptions?.length ?? 0;
-  const itemCount = rowCount > 0 ? rowCount + 50 : 0;
+
 
   const onRowsRendered = useInfiniteLoader({
     isRowLoaded: (index) => index < rowCount,

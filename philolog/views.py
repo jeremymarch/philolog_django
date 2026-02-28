@@ -32,12 +32,12 @@ def get_lex_db_name(short_lex_name):
 def get_words_range(request):
     """Get words in range"""
 
-    #lex = get_lex_db_name(query_data["lexicon"])
+    lex = get_lex_db_name(request.GET["lexicon"])
     start_index = int(request.GET["start"])
     end_index = int(request.GET["end"])
 
     words = Word.objects.filter(
-        word_id__gte=start_index, word_id__lte=end_index
+        word_id__gte=start_index, word_id__lte=end_index, lexicon=lex
     ).order_by("word_id").values_list("word_id", "word")
 
     response = {
