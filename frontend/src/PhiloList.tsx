@@ -321,18 +321,23 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
               const clientHeight = listElement.clientHeight;
               const currentScrollTop = listElement.scrollTop;
 
-              const firstVisibleIndex = Math.ceil(currentScrollTop / rowHeight);
-              const lastVisibleIndex =
-                Math.floor((currentScrollTop + clientHeight) / rowHeight) - 1;
+              const firstVisibleIndex =
+                Math.floor(currentScrollTop / rowHeight) + 1;
+              const lastVisibleIndex = Math.floor(
+                (currentScrollTop + clientHeight) / rowHeight,
+              );
 
               if (event.key === "ArrowDown") {
                 if (newIndex >= lastVisibleIndex) {
                   listElement.scrollTop =
-                    (newIndex + 2) * rowHeight - clientHeight;
+                    (newIndex + 1) * rowHeight - clientHeight;
                 }
               } else if (event.key === "ArrowUp") {
                 if (newIndex <= firstVisibleIndex) {
-                  listElement.scrollTop = (newIndex - 1) * rowHeight;
+                  listElement.scrollTop = Math.max(
+                    0,
+                    (newIndex - 2) * rowHeight,
+                  );
                 }
               }
             }
