@@ -87,7 +87,7 @@ def query_words(word_prefix, lex, page, page_size):
 
 def get_words(request):
     """Returns page_size words above and below given string prefix."""
-    page_size = 50
+    page_size = 100
     query_data = json.loads(request.GET["query"])
     page = int(request.GET["page"])
 
