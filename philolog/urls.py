@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     # path('ft', views.fulltext_query, name="philolog-ft"),
+    path("range", views.get_words_range, name="philolog-range"),
     path("query", views.get_words, name="philolog-query1"),
     # path('lsj/query', views.get_words, name="philolog-query2"),
     # path('ls/query', views.get_words, name="philolog-query3"),

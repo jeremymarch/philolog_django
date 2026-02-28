@@ -139,30 +139,32 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
 
   const loadMoreItems = async (startIndex: number, stopIndex: number) => {
     if (isLoading || !results || !results.arrOptions) return;
-    
+
     // Check if we are at the end
     if (stopIndex < results.arrOptions.length) return;
 
     const lastItem = results.arrOptions[results.arrOptions.length - 1];
     const lastWord = lastItem[1];
-    
+
     try {
       setIsLoading(true);
       const response = await axios.get<ResponseData>(
-        `query?query={"regex":0,"lexicon":"${lexicon}","tag_id":0,"root_id":0,"w":"${lastWord}"}&n=101&idprefix=lemmata&x=0.17297130510758496&requestTime=${Date.now()}&page=1&mode=context`,
+        `range?start=${startIndex}&end=${stopIndex}&lexicon=${lexicon}&requestTime=${Date.now()}`,
       );
-      
+
       if (response.data.arrOptions && response.data.arrOptions.length > 0) {
         // Filter out the first item if it's the same as our last item
-        const newItems = response.data.arrOptions.filter(item => item[0] !== lastItem[0]);
-        
+        const newItems = response.data.arrOptions.filter(
+          (item) => item[0] !== lastItem[0],
+        );
+
         if (newItems.length > 0) {
-          setResults(prev => {
-             if (!prev) return response.data;
-             return {
-               ...prev,
-               arrOptions: [...prev.arrOptions, ...newItems]
-             };
+          setResults((prev) => {
+            if (!prev) return response.data;
+            return {
+              ...prev,
+              arrOptions: [...prev.arrOptions, ...newItems],
+            };
           });
         }
       }

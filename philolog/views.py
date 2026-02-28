@@ -24,6 +24,36 @@ def get_lex_db_name(short_lex_name):
         lex = "pindar_dico"
     return lex
 
+# query_words gets word, index, and surrounding get_words
+# cache these words in a buffer in react.
+# trigger load_more to retrieve these words from the buffer instead of
+#     making an api call.
+# then scroll to the selected word.
+def get_words_range(request):
+    """Get words in range"""
+
+    #lex = get_lex_db_name(query_data["lexicon"])
+    start_index = int(request.GET["start"])
+    end_index = int(request.GET["end"])
+
+    words = Word.objects.filter(
+        word_id__gte=start_index, word_id__lte=end_index
+    ).order_by("word_id").values_list("word_id", "word")
+
+    response = {
+        "selectId": 0,
+        "error": "",
+        "wtprefix": "test1",
+        "nocache": 0,
+        "container": "Container",
+        "requestTime": request.GET["requestTime"],
+        "page": 0,
+        "lastPage": 0,
+        "lastPageUp": 0,
+        "query": "",
+        "arrOptions": list(words),
+    }
+    return JsonResponse(response)
 
 def query_words(word_prefix, lex, page, page_size):
     """Returns a tuple of the selected word_id and the list of words."""
@@ -53,7 +83,7 @@ def query_words(word_prefix, lex, page, page_size):
 
 def get_words(request):
     """Returns page_size words above and below given string prefix."""
-    page_size = 200
+    page_size = 50
     query_data = json.loads(request.GET["query"])
     page = int(request.GET["page"])
 
