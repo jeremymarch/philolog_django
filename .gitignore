@@ -198,3 +198,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+static/philolog/react_build/.vite/manifest.json
