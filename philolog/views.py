@@ -29,7 +29,10 @@ def get_lex_db_name(short_lex_name):
 # trigger load_more to retrieve these words from the buffer instead of
 #     making an api call.
 # then scroll to the selected word.
+
+
 def get_words_range(request):
+
     """Get words in range"""
 
     lex = get_lex_db_name(request.GET["lexicon"])
@@ -54,6 +57,7 @@ def get_words_range(request):
         "arrOptions": list(words),
     }
     return JsonResponse(response)
+
 
 def query_words(word_prefix, lex, page, page_size):
     """Returns a tuple of the selected word_id and the list of words."""
