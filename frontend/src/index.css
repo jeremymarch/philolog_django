@@ -50,6 +50,15 @@
   --foreign-weight: normal;
   --quote-weight: normal;
 }
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
 
 @font-face {
   font-family: "WebNewAthenaUnicode";
@@ -80,7 +89,12 @@ input[type="radio"] {
   margin: 15px;
   height: 26px;
 }
-.philobuttons button {
+.philobuttons input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+.philobuttons label {
   flex: 1;
   flex-basis: auto;
   font-family: helvetica, arial, sans-serif;
@@ -92,16 +106,15 @@ input[type="radio"] {
   cursor: pointer;
   margin: 0px 4px;
 }
-
-.dark .philobuttons button {
+.dark .philobuttons label {
   background-color: var(--dark-button);
   color: var(--dark-text);
 }
-.philobuttons button.active {
+.philobuttons input[type="radio"]:checked + label {
   background-color: var(--light-button-active);
   color: var(--dark-text);
 }
-.dark .philobuttons button.active {
+.dark .philobuttons input[type="radio"]:checked + label {
   background-color: var(--dark-button-active);
   color: var(--dark-text);
 }
@@ -156,10 +169,10 @@ input[type="radio"] {
   left: 20px;
   border: 2px solid var(--light-text);
   border-radius: 14px;
-  height: 21px;
+  height: 36px;
   padding: 4px 10px;
   padding-bottom: 4px;
-  width: calc(100% - 90px);
+  width: calc(100% - 63px);
   padding-bottom: 6px;
   background-color: var(--light-bg);
   color: var(--light-text);
@@ -186,7 +199,7 @@ input[type="radio"] {
   bottom: 10px;
   background-color: var(--light-bg);
   border-radius: 14px;
-  padding: 20px;
+  padding: 10px;
 }
 .dark .philodefcontainer {
   background-color: var(--dark-bg);
@@ -196,6 +209,7 @@ input[type="radio"] {
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  padding: 10px;
 }
 
 body {

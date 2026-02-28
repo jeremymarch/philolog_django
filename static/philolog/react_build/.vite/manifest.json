@@ -16,9 +16,7 @@
     "name": "main",
     "src": "src/main.tsx",
     "isEntry": true,
-    "css": [
-      "assets/main-BNWVjQ1A.css"
-    ],
+    "css": ["assets/main-CbW4qprp.css"],
     "assets": [
       "assets/newathu5_8_v2-CzDtu4x7.woff2",
       "assets/newathu5_8_v2-SpAj_jIQ.woff",

@@ -13,7 +13,7 @@ python manage.py migrate
 python manage.py load_lexica   
 
 ## To run development server:  
-npm --prefix frontend run build && ALLOWED_HOSTS="localhost" DJANGO_SECRET_KEY="ABC" python manage.py runserver  
+npm --prefix frontend run build && ALLOWED_HOSTS="localhost 127.0.0.1" DJANGO_SECRET_KEY="ABC" python manage.py runserver  
 
 browse:  
 http://localhost:8000/  

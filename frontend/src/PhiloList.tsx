@@ -271,6 +271,26 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       event.preventDefault();
       setLexiconAndSave("ls");
       setSearchTerm("");
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      if (lexicon === "lsj") {
+        setLexiconAndSave("ls");
+      } else if (lexicon === "slater") {
+        setLexiconAndSave("lsj");
+      } else if (lexicon === "ls") {
+        setLexiconAndSave("slater");
+      }
+      setSearchTerm("");
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      if (lexicon === "lsj") {
+        setLexiconAndSave("slater");
+      } else if (lexicon === "slater") {
+        setLexiconAndSave("ls");
+      } else if (lexicon === "ls") {
+        setLexiconAndSave("lsj");
+      }
+      setSearchTerm("");
     } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       if (results.arrOptions.size === 0) return;
 
@@ -374,36 +394,45 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       }}
     >
       <div className="philobuttons">
-        <button
-          onClick={() => {
+        <input
+          type="radio"
+          name="lexicon-select"
+          value="lsj"
+          id="lsj-radio"
+          checked={lexicon === "lsj"}
+          onChange={() => {
             setLexiconAndSave("lsj");
-            setSearchTerm("");
+            //setSearchTerm("");
           }}
-          disabled={lexicon === "lsj"}
-          className={lexicon === "lsj" ? "active" : ""}
-        >
-          LSJ
-        </button>
-        <button
-          onClick={() => {
+          tabIndex={-1}
+        />
+        <label htmlFor="lsj-radio">LSJ</label>
+        <input
+          type="radio"
+          name="lexicon-select"
+          value="slater"
+          id="slater-radio"
+          checked={lexicon === "slater"}
+          onChange={() => {
             setLexiconAndSave("slater");
-            setSearchTerm("");
+            //setSearchTerm("");
           }}
-          disabled={lexicon === "slater"}
-          className={lexicon === "slater" ? "active" : ""}
-        >
-          Slater
-        </button>
-        <button
-          onClick={() => {
+          tabIndex={-1}
+        />
+        <label htmlFor="slater-radio">Slater</label>
+        <input
+          type="radio"
+          name="lexicon-select"
+          value="ls"
+          id="ls-radio"
+          checked={lexicon === "ls"}
+          onChange={() => {
             setLexiconAndSave("ls");
-            setSearchTerm("");
+            //setSearchTerm("");
           }}
-          disabled={lexicon === "ls"}
-          className={lexicon === "ls" ? "active" : ""}
-        >
-          Lewis & Short
-        </button>
+          tabIndex={-1}
+        />
+        <label htmlFor="ls-radio">Lewis & Short</label>
       </div>
       <input
         ref={inputRef}
