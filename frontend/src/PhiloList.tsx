@@ -38,6 +38,12 @@ interface ResponseData {
   arrOptions: Array<PhiloRowItem>;
 }
 
+interface PhiloListState {
+  selectId: number;
+  query: string;
+  arrOptions: Map<number, string>;
+}
+
 interface PhiloListProps {
   onWordSelect: (id: number, lexicon: string) => void;
 }
@@ -48,7 +54,11 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     const savedLexicon = localStorage.getItem("lexicon");
     return savedLexicon || "lsj";
   });
-  const [results, setResults] = useState<ResponseData>();
+  const [results, setResults] = useState<PhiloListState>({
+    selectId: 0,
+    query: "",
+    arrOptions: new Map(),
+  });
   const [isLoading, setIsLoading] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +70,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   const setLexiconAndSave = (newLexicon: string) => {
     setLexiconState(newLexicon);
     localStorage.setItem("lexicon", newLexicon);
+    setResults({ selectId: 0, query: "", arrOptions: new Map() });
   };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 350);
@@ -121,7 +132,17 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         const response = await axios.get<ResponseData>(
           `query?query={"regex":0,"lexicon":"${currentLexicon}","tag_id":0,"root_id":0,"w":"${query}"}&n=101&idprefix=lemmata&x=0.17297130510758496&requestTime=1771393815484&page=0&mode=context`,
         );
-        setResults(response.data);
+
+        const newMap = new Map<number, string>();
+        response.data.arrOptions.forEach(([id, word]) => {
+          newMap.set(id, word);
+        });
+
+        setResults({
+          selectId: response.data.selectId,
+          query: response.data.query,
+          arrOptions: newMap,
+        });
 
         if (response.data.selectId !== null && response.data.query !== "") {
           setSelectedWordId(response.data.selectId);
@@ -137,47 +158,27 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     [],
   );
 
-  const itemCount = results ? results.arrOptions.length + 50 : 50;
+  const itemCount = 300000;
   const loadMoreItems = async (startIndex: number, stopIndex: number) => {
-    if (
-      isLoading ||
-      !results ||
-      !results.arrOptions ||
-      results.arrOptions.length === 0
-    )
-      return;
-
-    // Check if we are at the end
-    if (stopIndex < results.arrOptions.length) return;
-
-    const lastItem = results.arrOptions[results.arrOptions.length - 1];
-
-    // Calculate absolute IDs based on the last known item's ID
-    const offset = lastItem[0] - (results.arrOptions.length - 1);
-    const actualStart = startIndex + offset;
-    const actualEnd = stopIndex + offset;
+    if (isLoading) return;
 
     try {
       setIsLoading(true);
       const response = await axios.get<ResponseData>(
-        `range?start=${actualStart}&end=${actualEnd}&lexicon=${lexicon}&requestTime=${Date.now()}`,
+        `range?start=${startIndex}&end=${stopIndex}&lexicon=${lexicon}&requestTime=${Date.now()}`,
       );
 
       if (response.data.arrOptions && response.data.arrOptions.length > 0) {
-        // Filter out items we already have
-        const newItems = response.data.arrOptions.filter(
-          (item) => item[0] > lastItem[0],
-        );
-
-        if (newItems.length > 0) {
-          setResults((prev) => {
-            if (!prev) return response.data;
-            return {
-              ...prev,
-              arrOptions: [...prev.arrOptions, ...newItems],
-            };
+        setResults((prev) => {
+          const updatedMap = new Map(prev.arrOptions);
+          response.data.arrOptions.forEach(([id, word]) => {
+            updatedMap.set(id, word);
           });
-        }
+          return {
+            ...prev,
+            arrOptions: updatedMap,
+          };
+        });
       }
     } catch (err) {
       console.error("Failed to load more items:", err);
@@ -192,43 +193,38 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
 
   useEffect(() => {
     if (
-      results?.query !== "" &&
-      results?.selectId !== undefined &&
+      results.query !== "" &&
+      results.selectId !== undefined &&
       results.selectId !== null &&
-      results.arrOptions &&
+      results.arrOptions.size > 0 &&
       listRef.current
     ) {
-      const index = results.arrOptions.findIndex(
-        (item) => item[0] === results.selectId,
-      );
-      if (index !== -1) {
-        listRef.current.scrollToRow({ index, align: "center" });
-      }
+      listRef.current.scrollToRow({ index: results.selectId, align: "center" });
     }
-  }, [results, listRef]);
+  }, [results.query, results.selectId, results.arrOptions.size, listRef]);
 
   useEffect(() => {
     if (
-      results?.query === "" &&
+      results.query === "" &&
       listRef.current &&
-      (results?.arrOptions?.length ?? 0) > 0
+      results.arrOptions.size > 0
     ) {
       listRef.current.scrollToRow({ index: 0, align: "start" });
       setShouldScrollToTop(false);
     }
-  }, [results, listRef]);
+  }, [results.query, results.arrOptions.size, listRef]);
 
   useEffect(() => {
     if (
       shouldScrollToTop &&
-      results?.query === "" &&
+      results.query === "" &&
       listRef.current &&
-      (results?.arrOptions?.length ?? 0) > 0
+      results.arrOptions.size > 0
     ) {
       listRef.current.scrollToRow({ index: 0, align: "start" });
       setShouldScrollToTop(false);
     }
-  }, [shouldScrollToTop, results, listRef]);
+  }, [shouldScrollToTop, results.query, results.arrOptions.size, listRef]);
 
   // Handle input changes
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -264,37 +260,27 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       setLexiconAndSave("ls");
       setSearchTerm("");
     } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      if (!results || !results.arrOptions || results.arrOptions.length === 0)
-        return;
+      if (results.arrOptions.size === 0) return;
 
       event.preventDefault();
 
       let newIndex = -1;
       if (selectedWordId === null) {
-        newIndex = 0;
-      } else {
-        const currentIndex = results.arrOptions.findIndex(
-          (item) => item[0] === selectedWordId,
+        // Find the first loaded index in the map
+        const loadedIndices = Array.from(results.arrOptions.keys()).sort(
+          (a, b) => a - b,
         );
-        if (currentIndex === -1) {
-          newIndex = 0;
+        newIndex = loadedIndices[0] || 1;
+      } else {
+        if (event.key === "ArrowDown") {
+          newIndex = Math.min(selectedWordId + 1, itemCount - 1);
         } else {
-          if (event.key === "ArrowDown") {
-            newIndex = Math.min(
-              currentIndex + 1,
-              results.arrOptions.length - 1,
-            );
-          } else {
-            newIndex = Math.max(currentIndex - 1, 0);
-          }
+          newIndex = Math.max(selectedWordId - 1, 1);
         }
       }
 
       if (newIndex !== -1) {
-        const [newWordId] = results.arrOptions[newIndex];
-        setSelectedWordId(newWordId);
-        //use key up to select the word, so there are no extra api calls during fast scrolling
-        //onWordSelect(newWordId, lexicon);
+        setSelectedWordId(newIndex);
         if (listRef.current) {
           if (scrollOnEdge) {
             const listElement = listRef.current.element;
@@ -319,7 +305,6 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
               }
             }
           } else {
-            // Original behavior: always scroll to center
             listRef.current.scrollToRow({ index: newIndex, align: "center" });
           }
         }
@@ -329,26 +314,25 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
 
   function PhiloListRowComponent({
     index,
-    results,
     style,
   }: RowComponentProps<{
-    results: ResponseData | undefined;
+    results: PhiloListState;
   }>) {
-    if (results !== undefined && results.arrOptions[index]) {
-      const wordId = results.arrOptions[index][0];
-      const isSelected = wordId === selectedWordId;
+    const word = results.arrOptions.get(index);
+    if (word !== undefined) {
+      const isSelected = index === selectedWordId;
       return (
         <div
           className={`philorow ${isSelected ? "selectedrow" : ""}`}
-          data-wordid={wordId}
+          data-wordid={index}
           data-lexicon={lexicon}
           style={style}
           onClick={() => {
-            setSelectedWordId(wordId);
-            onWordSelect(wordId, lexicon);
+            setSelectedWordId(index);
+            onWordSelect(index, lexicon);
           }}
         >
-          {results.arrOptions[index][1]}
+          {word}
         </div>
       );
     } else {
@@ -360,13 +344,12 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     }
   }
 
-  const rowCount = results?.arrOptions?.length ?? 0;
-
-
   const onRowsRendered = useInfiniteLoader({
-    isRowLoaded: (index) => index < rowCount,
+    isRowLoaded: (index) => results.arrOptions.has(index),
     loadMoreRows: loadMoreItems,
     rowCount: itemCount,
+    threshold: 30,
+    minimumBatchSize: 100,
   });
 
   return (
