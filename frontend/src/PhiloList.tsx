@@ -48,6 +48,12 @@ interface PhiloListProps {
   onWordSelect: (id: number, lexicon: string) => void;
 }
 
+const LEXICON_LIMITS: Record<string, number> = {
+  lsj: 116661,
+  slater: 5281,
+  ls: 51675,
+};
+
 const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [lexicon, setLexiconState] = useState(() => {
@@ -158,14 +164,20 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     [],
   );
 
-  const itemCount = 300000;
+  const itemCount = (LEXICON_LIMITS[lexicon] || 300000) + 1;
   const loadMoreItems = async (startIndex: number, stopIndex: number) => {
     if (isLoading) return;
+
+    const limit = LEXICON_LIMITS[lexicon] || 300000;
+    const actualStart = Math.max(1, startIndex);
+    const actualEnd = Math.min(stopIndex, limit);
+
+    if (actualStart > actualEnd) return;
 
     try {
       setIsLoading(true);
       const response = await axios.get<ResponseData>(
-        `range?start=${startIndex}&end=${stopIndex}&lexicon=${lexicon}&requestTime=${Date.now()}`,
+        `range?start=${actualStart}&end=${actualEnd}&lexicon=${lexicon}&requestTime=${Date.now()}`,
       );
 
       if (response.data.arrOptions && response.data.arrOptions.length > 0) {
@@ -209,7 +221,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       listRef.current &&
       results.arrOptions.size > 0
     ) {
-      listRef.current.scrollToRow({ index: 0, align: "start" });
+      listRef.current.scrollToRow({ index: 1, align: "start" });
       setShouldScrollToTop(false);
     }
   }, [results.query, results.arrOptions.size, listRef]);
@@ -221,7 +233,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       listRef.current &&
       results.arrOptions.size > 0
     ) {
-      listRef.current.scrollToRow({ index: 0, align: "start" });
+      listRef.current.scrollToRow({ index: 1, align: "start" });
       setShouldScrollToTop(false);
     }
   }, [shouldScrollToTop, results.query, results.arrOptions.size, listRef]);
@@ -318,6 +330,8 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   }: RowComponentProps<{
     results: PhiloListState;
   }>) {
+    if (index === 0) return <div style={style} />;
+
     const word = results.arrOptions.get(index);
     if (word !== undefined) {
       const isSelected = index === selectedWordId;
@@ -345,7 +359,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   }
 
   const onRowsRendered = useInfiniteLoader({
-    isRowLoaded: (index) => results.arrOptions.has(index),
+    isRowLoaded: (index) => index === 0 || results.arrOptions.has(index),
     loadMoreRows: loadMoreItems,
     rowCount: itemCount,
     threshold: 30,
@@ -424,7 +438,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         rowProps={{ results }}
         rowComponent={PhiloListRowComponent}
         rowCount={itemCount}
-        rowHeight={40}
+        rowHeight={(index) => (index === 0 ? 0 : 40)}
         style={{ width: 260, height: "calc(100% - 120px)" }}
         className="philolist no-scrollbars"
       />
