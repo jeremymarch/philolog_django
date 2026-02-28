@@ -78,10 +78,10 @@ input[type="radio"] {
 }
 
 *:focus {
-  outline: 1px solid black;
+  outline: 1px dotted black;
 }
 .dark *:focus {
-  outline: 1px solid white;
+  outline: 1px dotted white;
 }
 
 .philobuttons {
@@ -180,11 +180,11 @@ input[type="radio"] {
 }
 .philosearch:focus-visible,
 .philosearch:focus {
-  outline: 1px solid black;
+  outline: 2px solid var(--light-button-active);
 }
 .dark .philosearch:focus-visible,
 .dark .philosearch:focus {
-  outline: 1px solid var(--dark-text);
+  outline: 2px solid var(--dark-button-active);
 }
 .dark .philosearch {
   border: 2px solid var(--dark-text);

@@ -12,12 +12,12 @@
     "src": "src/assets/newathu5_8_v2.woff2"
   },
   "src/main.tsx": {
-    "file": "assets/main-BT8oULx5.js",
+    "file": "assets/main-zd32Daqz.js",
     "name": "main",
     "src": "src/main.tsx",
     "isEntry": true,
     "css": [
-      "assets/main-DeGVd9Sl.css"
+      "assets/main-CguEnrPC.css"
     ],
     "assets": [
       "assets/newathu5_8_v2-CzDtu4x7.woff2",

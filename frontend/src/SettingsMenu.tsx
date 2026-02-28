@@ -44,7 +44,7 @@ const SettingsMenu = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" || e.key === "Escape") {
       e.preventDefault();
       e.stopPropagation();
       setIsOpen(false);
