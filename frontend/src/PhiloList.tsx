@@ -474,7 +474,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         rowCount={itemCount}
         rowHeight={(index) => (index === 0 ? 0 : 40)}
         style={{ width: 260, height: "calc(100% - 120px)" }}
-        className="philolist no-scrollbars"
+        className="philolist"
       />
     </div>
   );
