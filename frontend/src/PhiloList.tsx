@@ -322,7 +322,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
               const currentScrollTop = listElement.scrollTop;
 
               const firstVisibleIndex =
-                Math.floor((currentScrollTop + 5) / rowHeight) + 1;
+                Math.floor((currentScrollTop + 15) / rowHeight) + 1;
               const lastVisibleIndex = Math.floor(
                 (currentScrollTop + clientHeight) / rowHeight,
               );
