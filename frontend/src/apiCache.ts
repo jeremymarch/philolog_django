@@ -3,7 +3,7 @@ class ApiCache<T> {
   private keys: string[] = [];
   private limit: number;
 
-  constructor(limit = 10) {
+  constructor(limit = 20) {
     this.limit = limit;
   }
 
@@ -47,6 +47,6 @@ interface ResponseData {
   arrOptions: Array<PhiloRowItem>;
 }
 
-export const searchCache = new ApiCache<ResponseData>(10);
-export const rangeCache = new ApiCache<ResponseData>(10);
-export const definitionCache = new ApiCache<string>(10);
+export const searchCache = new ApiCache<ResponseData>(20);
+export const rangeCache = new ApiCache<ResponseData>(20);
+export const definitionCache = new ApiCache<string>(20);
