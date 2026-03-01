@@ -133,7 +133,11 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   };
 
   const fetchData = useCallback(
-    async (query: string, currentLexicon: string) => {
+    async (
+      query: string,
+      currentLexicon: string,
+      isActive: () => boolean,
+    ) => {
       setSelectedWordId(null);
       setIsLoading(true);
       setError(null);
@@ -153,6 +157,8 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
           searchCache.set(cacheKey, responseData);
         }
 
+        if (!isActive()) return;
+
         const newMap = new Map<number, string>();
         responseData.arrOptions.forEach(([id, word]) => {
           newMap.set(id, word);
@@ -170,10 +176,13 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
           onWordSelectRef.current(responseData.selectId, currentLexicon);
         }
       } catch (err) {
+        if (!isActive()) return;
         setError("Failed to fetch data");
         console.error(err);
       } finally {
-        setIsLoading(false);
+        if (isActive()) {
+          setIsLoading(false);
+        }
       }
     },
     [],
@@ -210,18 +219,21 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         rangeCache.set(cacheKey, responseData);
       }
 
-      if (responseData.arrOptions && responseData.arrOptions.length > 0) {
-        setResults((prev) => {
-          const updatedMap = new Map(prev.arrOptions);
+      setResults((prev) => {
+        // If the lexicon or query has changed while this range was loading, discard it
+        if (lexicon !== prev.lexicon || results.query !== prev.query) return prev;
+
+        const updatedMap = new Map(prev.arrOptions);
+        if (responseData.arrOptions && responseData.arrOptions.length > 0) {
           responseData.arrOptions.forEach(([id, word]) => {
             updatedMap.set(id, word);
           });
-          return {
-            ...prev,
-            arrOptions: updatedMap,
-          };
-        });
-      }
+        }
+        return {
+          ...prev,
+          arrOptions: updatedMap,
+        };
+      });
     } catch (err) {
       console.error("Failed to load more items:", err);
     } finally {
@@ -230,7 +242,11 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   };
 
   useEffect(() => {
-    fetchData(debouncedSearchTerm, lexicon);
+    let active = true;
+    fetchData(debouncedSearchTerm, lexicon, () => active);
+    return () => {
+      active = false;
+    };
   }, [debouncedSearchTerm, lexicon, fetchData]);
 
   useEffect(() => {
@@ -245,19 +261,23 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     }
   }, [results.query, results.selectId, results.arrOptions.size, listRef]);
 
-  useEffect(() => {
-    if (results.query === "" && listRef.current) {
-      listRef.current.scrollToRow({ index: 1, align: "start" });
-      setShouldScrollToTop(false);
-    }
-  }, [results.query, listRef]);
-
-  useEffect(() => {
-    if (shouldScrollToTop && results.query === "" && listRef.current) {
-      listRef.current.scrollToRow({ index: 1, align: "start" });
-      setShouldScrollToTop(false);
-    }
-  }, [shouldScrollToTop, results.query, listRef]);
+    useEffect(() => {
+      if (results.query === "" && listRef.current) {
+        listRef.current.scrollToRow({ index: 1, align: "start" });
+        setShouldScrollToTop(false);
+      }
+    }, [results.query, results.lexicon, listRef]);
+  
+    useEffect(() => {
+      if (
+        shouldScrollToTop &&
+        results.query === "" &&
+        listRef.current
+      ) {
+        listRef.current.scrollToRow({ index: 1, align: "start" });
+        setShouldScrollToTop(false);
+      }
+    }, [shouldScrollToTop, results.query, results.lexicon, listRef]);
 
   // Handle input changes
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
