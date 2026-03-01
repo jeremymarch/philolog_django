@@ -41,6 +41,7 @@ interface ResponseData {
 interface PhiloListState {
   selectId: number;
   query: string;
+  lexicon: string;
   arrOptions: Map<number, string>;
 }
 
@@ -63,6 +64,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   const [results, setResults] = useState<PhiloListState>({
     selectId: 0,
     query: "",
+    lexicon: "",
     arrOptions: new Map(),
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -74,9 +76,10 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   const [scrollOnEdge, setScrollOnEdge] = useState(true); // New state variable
 
   const setLexiconAndSave = (newLexicon: string) => {
+    setSearchTerm("");
     setLexiconState(newLexicon);
     localStorage.setItem("lexicon", newLexicon);
-    setResults({ selectId: 0, query: "", arrOptions: new Map() });
+    setResults({ selectId: 0, query: "", lexicon: "", arrOptions: new Map() });
   };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 350);
@@ -147,6 +150,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
         setResults({
           selectId: response.data.selectId,
           query: response.data.query,
+          lexicon: currentLexicon,
           arrOptions: newMap,
         });
 
@@ -166,7 +170,12 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
 
   const itemCount = (LEXICON_LIMITS[lexicon] || 300000) + 1;
   const loadMoreItems = async (startIndex: number, stopIndex: number) => {
-    if (isLoading) return;
+    if (
+      isLoading ||
+      searchTerm !== results.query ||
+      lexicon !== results.lexicon
+    )
+      return;
 
     const limit = LEXICON_LIMITS[lexicon] || 300000;
     const actualStart = Math.max(1, startIndex);
@@ -216,27 +225,18 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   }, [results.query, results.selectId, results.arrOptions.size, listRef]);
 
   useEffect(() => {
-    if (
-      results.query === "" &&
-      listRef.current &&
-      results.arrOptions.size > 0
-    ) {
+    if (results.query === "" && listRef.current) {
       listRef.current.scrollToRow({ index: 1, align: "start" });
       setShouldScrollToTop(false);
     }
-  }, [results.query, results.arrOptions.size, listRef]);
+  }, [results.query, listRef]);
 
   useEffect(() => {
-    if (
-      shouldScrollToTop &&
-      results.query === "" &&
-      listRef.current &&
-      results.arrOptions.size > 0
-    ) {
+    if (shouldScrollToTop && results.query === "" && listRef.current) {
       listRef.current.scrollToRow({ index: 1, align: "start" });
       setShouldScrollToTop(false);
     }
-  }, [shouldScrollToTop, results.query, results.arrOptions.size, listRef]);
+  }, [shouldScrollToTop, results.query, listRef]);
 
   // Handle input changes
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -262,15 +262,12 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     } else if (event.key === "1") {
       event.preventDefault();
       setLexiconAndSave("lsj");
-      setSearchTerm("");
     } else if (event.key === "2") {
       event.preventDefault();
       setLexiconAndSave("slater");
-      setSearchTerm("");
     } else if (event.key === "3") {
       event.preventDefault();
       setLexiconAndSave("ls");
-      setSearchTerm("");
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
       if (lexicon === "lsj") {
@@ -280,7 +277,6 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       } else if (lexicon === "ls") {
         setLexiconAndSave("slater");
       }
-      setSearchTerm("");
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
       if (lexicon === "lsj") {
@@ -290,7 +286,6 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       } else if (lexicon === "ls") {
         setLexiconAndSave("lsj");
       }
-      setSearchTerm("");
     } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       if (results.arrOptions.size === 0) return;
 
@@ -387,7 +382,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
     isRowLoaded: (index) => index === 0 || results.arrOptions.has(index),
     loadMoreRows: loadMoreItems,
     rowCount: itemCount,
-    threshold: 30,
+    threshold: 20,
     minimumBatchSize: 100,
   });
 
@@ -407,7 +402,6 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
           checked={lexicon === "lsj"}
           onChange={() => {
             setLexiconAndSave("lsj");
-            //setSearchTerm("");
           }}
           tabIndex={-1}
         />
@@ -420,7 +414,6 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
           checked={lexicon === "slater"}
           onChange={() => {
             setLexiconAndSave("slater");
-            //setSearchTerm("");
           }}
           tabIndex={-1}
         />
@@ -433,7 +426,6 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
           checked={lexicon === "ls"}
           onChange={() => {
             setLexiconAndSave("ls");
-            //setSearchTerm("");
           }}
           tabIndex={-1}
         />
