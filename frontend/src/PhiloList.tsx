@@ -77,6 +77,7 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
   const [scrollOnEdge, setScrollOnEdge] = useState(true); // New state variable
 
   const setLexiconAndSave = (newLexicon: string) => {
+    if (newLexicon === lexicon) return;
     setSearchTerm("");
     setLexiconState(newLexicon);
     localStorage.setItem("lexicon", newLexicon);
