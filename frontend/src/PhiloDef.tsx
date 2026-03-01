@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { definitionCache } from "./apiCache";
 
 interface PhiloDefProps {
   wordId: number | null;
@@ -18,6 +19,14 @@ const PhiloDef = ({ wordId, lexicon }: PhiloDefProps) => {
     }
 
     const fetchDefinition = async () => {
+      const cacheKey = `${lexicon}:${wordId}`;
+      const cachedData = definitionCache.get(cacheKey);
+
+      if (cachedData) {
+        setDefinition(cachedData);
+        return;
+      }
+
       setLoading(true);
       setError(null);
       try {
@@ -25,7 +34,9 @@ const PhiloDef = ({ wordId, lexicon }: PhiloDefProps) => {
         const response = await axios.get(
           `item?id=${wordId}&lexicon=${lexicon}&skipcache=0&addwordlinks=0&x=0.9559306530260945`,
         );
-        setDefinition(response.data.def);
+        const def = response.data.def;
+        setDefinition(def);
+        definitionCache.set(cacheKey, def);
       } catch (err) {
         console.error("Failed to fetch definition:", err);
         setError("Failed to load definition.");

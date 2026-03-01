@@ -8,6 +8,7 @@ import {
 import { useInfiniteLoader } from "react-window-infinite-loader";
 import axios from "axios";
 import { useDebounce } from "./useDebounce";
+import { searchCache, rangeCache } from "./apiCache";
 
 type PhiloRowItem = [number, string];
 
@@ -137,26 +138,36 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
       setIsLoading(true);
       setError(null);
 
+      const cacheKey = `${currentLexicon}:${query}`;
+      const cachedData = searchCache.get(cacheKey);
+
       try {
-        const response = await axios.get<ResponseData>(
-          `query?query={"regex":0,"lexicon":"${currentLexicon}","tag_id":0,"root_id":0,"w":"${query}"}&n=101&idprefix=lemmata&x=0.17297130510758496&requestTime=1771393815484&page=0&mode=context`,
-        );
+        let responseData: ResponseData;
+        if (cachedData) {
+          responseData = cachedData;
+        } else {
+          const response = await axios.get<ResponseData>(
+            `query?query={"regex":0,"lexicon":"${currentLexicon}","tag_id":0,"root_id":0,"w":"${query}"}&n=101&idprefix=lemmata&x=0.17297130510758496&requestTime=1771393815484&page=0&mode=context`,
+          );
+          responseData = response.data;
+          searchCache.set(cacheKey, responseData);
+        }
 
         const newMap = new Map<number, string>();
-        response.data.arrOptions.forEach(([id, word]) => {
+        responseData.arrOptions.forEach(([id, word]) => {
           newMap.set(id, word);
         });
 
         setResults({
-          selectId: response.data.selectId,
-          query: response.data.query,
+          selectId: responseData.selectId,
+          query: responseData.query,
           lexicon: currentLexicon,
           arrOptions: newMap,
         });
 
-        if (response.data.selectId !== null && response.data.query !== "") {
-          setSelectedWordId(response.data.selectId);
-          onWordSelectRef.current(response.data.selectId, currentLexicon);
+        if (responseData.selectId !== null && responseData.query !== "") {
+          setSelectedWordId(responseData.selectId);
+          onWordSelectRef.current(responseData.selectId, currentLexicon);
         }
       } catch (err) {
         setError("Failed to fetch data");
@@ -183,16 +194,26 @@ const PhiloList = ({ onWordSelect }: PhiloListProps) => {
 
     if (actualStart > actualEnd) return;
 
+    const cacheKey = `${lexicon}:${actualStart}:${actualEnd}`;
+    const cachedData = rangeCache.get(cacheKey);
+
     try {
       setIsLoading(true);
-      const response = await axios.get<ResponseData>(
-        `range?start=${actualStart}&end=${actualEnd}&lexicon=${lexicon}&requestTime=${Date.now()}`,
-      );
+      let responseData: ResponseData;
+      if (cachedData) {
+        responseData = cachedData;
+      } else {
+        const response = await axios.get<ResponseData>(
+          `range?start=${actualStart}&end=${actualEnd}&lexicon=${lexicon}&requestTime=${Date.now()}`,
+        );
+        responseData = response.data;
+        rangeCache.set(cacheKey, responseData);
+      }
 
-      if (response.data.arrOptions && response.data.arrOptions.length > 0) {
+      if (responseData.arrOptions && responseData.arrOptions.length > 0) {
         setResults((prev) => {
           const updatedMap = new Map(prev.arrOptions);
-          response.data.arrOptions.forEach(([id, word]) => {
+          responseData.arrOptions.forEach(([id, word]) => {
             updatedMap.set(id, word);
           });
           return {
